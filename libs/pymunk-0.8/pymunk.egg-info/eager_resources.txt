@@ -1,0 +1,5 @@
+pymunk\libchipmunk.dll
+pymunk\libchipmunk32.so
+pymunk\libchipmunk64.so
+pymunk\libchipmunk.so
+pymunk\libchipmunk.dylib
