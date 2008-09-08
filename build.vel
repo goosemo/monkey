@@ -1,0 +1,51 @@
+options (
+        projectName "Balloon-Kill-0.01"
+        authors ["Alfred Rossi" "Morgan Goose" "Jane Drozig"]
+        description "pyWeek 2008 entry for the Ohio State Game Creation Club"
+        groupEmail "morgan.goose@gmail.com"        
+
+        website 'http://gcc.accad.ohio-state.edu/projects/pyWeek08/'
+        version.file 'version.py'
+        
+
+        user "morgan.goose"
+        password "test"
+        screenshot screenshot.png
+
+        default 'hello'
+)
+
+imports[]
+
+depends(
+    hello ['py.hello']
+    upload ['create-upload']
+    upload-final ['create-upload']
+)
+
+
+targets(
+    hello [
+        py [
+            |print "%(projectName)s: %(description)s"
+            |for author in %(authors)s:
+            |   print "\t"+author
+            |print "%(description)s"
+        ]
+    ]
+
+    py.hello [
+        py [
+            "print 'hello from python'"
+        ]
+    ]
+
+    create-upload $ python create-upload.py %(projectName)s
+
+    upload $ python pyweek-upload.py -u %(user)s -p %(password)s -d %(description)s -c %(projectName)s.zip 
+
+    upload-screenshot $ python pyweek-upload.py -u %(user)s -p %(password)s -d %(description)s -c %(screenshot)s
+
+    upload-final $ python pyweek-upload.py -u %(user)s -p %(password)s -d %(description)s -c %(projectName)s.zip -f
+
+)
