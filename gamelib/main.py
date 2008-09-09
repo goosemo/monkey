@@ -14,6 +14,7 @@ class WorldEntity(object):
     _shape = None
     _body = None
     _pinjoints = []
+    _slidejoints = []
 
     def get_shape(self):
         return self._shape
@@ -29,7 +30,7 @@ class WorldEntity(object):
         pass
 
 class WorldEntityManager(object):
-    _entities = []
+    _entities = {} 
     _group_count = 0
 
     def __init__(self, space):
@@ -54,11 +55,12 @@ class WorldEntityManager(object):
         ent._shape = shape
         ent._body = body
 
-        self._entities.append((shape, ent))
+        self._entities[shape] =  ent
 
-        self._space.add(shape)
         if dynamic:
-            self._space.add(body)
+            self._space.add(body, shape)
+        else:
+            self._space.add_static(shape)
 
         return ent
 
@@ -68,16 +70,15 @@ class WorldEntityManager(object):
         ent_b._pinjoints.append(joint)
         self._space.add(joint)
 
-    def get_entity_by_shape(self, shape):
-        for ent_shape, ent in self._entities:
-            if ent_shape == shape:
-                return ent
-
-        return None
+    def slidejoin_worldentities(self, ent_a, ent_b, pos_a, pos_b, min, max):
+        joint = pymunk.SlideJoint(ent_a.get_body(), ent_b.get_body(), pos_a, pos_b, min, max)
+        ent_a._slidejoints.append(joint)
+        ent_b._slidejoints.append(joint)
+        self._space.add(joint)
 
     def on_collision(self, shapeA, shapeB, contacts, normal_coef, data):
-        ent_a = self.get_entity_by_shape(shapeA)
-        ent_b = self.get_entity_by_shape(shapeB)
+        ent_a = self._entities[shapeA]
+        ent_b = self._entities[shapeB]
 
         if ent_a and ent_b:
             ent_a.on_collision(ent_b)
@@ -86,14 +87,14 @@ class WorldEntityManager(object):
         return True
 
     def get_entities(self):
-        return [ent for (shape, ent) in self._entities]
+        return [ent for (shape, ent) in self._entities.iteritems()]
 
 
-PIX_PER_M = 2 #pixels per meter
+PIX_PER_M = 30 #pixels per meter
 
 SCREENSIZE = (800, 600)
 
-chain_link_len = 10
+chain_link_len = 15
 chain_link_poly = [(0,0), (0,5), (chain_link_len, 5), (chain_link_len, 0)]
 
 def make_chain(we_manager, length, allow_self_intersection = False):
@@ -122,29 +123,37 @@ def main():
     screen = pygame.display.set_mode(SCREENSIZE)
     pygame.display.set_caption('### OSUGCC PYWEEK PROTOTYPE')
 
+    font = pygame.font.Font(None, 16)
+
     #init pymunk
     pymunk.init_pymunk()
     space = pymunk.Space()
     space.gravity = (0.0, -9.8 * PIX_PER_M)
     space.damping = 0.98
-    space.resize_static_hash()
-    space.resize_active_hash()
+    space.resize_static_hash(dim=10, count=1000)
+    space.resize_active_hash(dim=10, count=1000)
 
     we_manager = WorldEntityManager(space)
     we_manager.create_worldentity((0,-20), [(0,0),(0, 20), (700, 20), (700, 0)], pymunk.inf, dynamic=False)
-    we_manager.create_worldentity((0,200), [(0,0),(0, 20), (300, 20), (300, 0)], pymunk.inf, dynamic=False)
+    we_manager.create_worldentity((0,200), [(0,0),(0, 20), (200, 20), (200, 0)], pymunk.inf, dynamic=False)
     
     space.set_default_collisionpair_func(we_manager.on_collision)
 
+    clock = pygame.time.Clock()
+    unused_time = 0
+    step_size = 0.015
+
     #pygame event loop
     is_running = True
-    with_physics = True
     while is_running:
         screen.fill((0,0,0))
 
         for entity in we_manager.get_entities():
             points = map(to_scr, entity.get_vertices())
             pygame.draw.polygon(screen, (255,255,255), points, 1)
+
+        text_surf = font.render("fps: %i" % clock.get_fps(), 1, (255,0,0))
+        screen.blit(text_surf, (5, 5))
 
         for event in pygame.event.get():
             if event.type == QUIT:
@@ -153,21 +162,17 @@ def main():
             elif event.type == KEYDOWN:
                 if event.key == K_ESCAPE:
                     is_running = False
-                elif event.key == K_s:
-                    space.step(1/50.0)
                 elif event.key == K_v:
-                    make_chain(we_manager, 30, True)
+                    make_chain(we_manager, 15, True)
                 elif event.key == K_c:
-                    make_chain(we_manager, 30, False)
-                elif event.key == K_SPACE:
-                    with_physics = not with_physics
+                    make_chain(we_manager, 15, False)
 
-            else:
-                print event
+        dt = clock.tick()/1000.0
+        unused_time += dt
+        while(unused_time > step_size):
+            space.step(step_size)
+            unused_time -= step_size
 
-
-        if with_physics:
-            space.step(1/50.0)
         pygame.display.flip()
 
 #    print data.load('sample.txt').read()
