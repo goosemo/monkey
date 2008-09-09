@@ -13,8 +13,10 @@ from pygame.locals import *
 class WorldEntity(object):
     _world_entity_manager = None
     _is_dynamic = True
+    _is_taggable = True
+    _is_grabable = False
 
-    def __init__(self, world_pos, vertices, mass, friction=0.15, moment = None):
+    def __init__(self, world_pos, vertices, mass, friction=0.15, moment = None, taggable=True, grabable=False):
         pymunk_verts = map(Vec2d, vertices)
         
         if not moment:
@@ -26,6 +28,15 @@ class WorldEntity(object):
         self._shape = pymunk.Poly(self._body, pymunk_verts, (0,0) )
         self._shape.friction = friction
 
+        self._is_taggable = taggable
+        self._is_grabable = grabable
+
+    def is_taggable(self):
+        return self._is_taggable
+
+    def is_grabable(self):
+        return self._is_grabable
+
     def is_world_bound(self):
         return self._world_entity_manager != None
 
@@ -35,11 +46,36 @@ class WorldEntity(object):
     def on_bind_world(self, world_entity_manager):
         self._world_entity_manager = world_entity_manager
 
+    def get_world_entity_manager(self):
+        return self._world_entity_manager
+
     def pin_join(self, entity, self_pos, entity_pos):
         if self.is_world_bound():
             return self._world_entity_manager.pin_join_entities(self, entity, self_pos, entity_pos)
 
         return False
+
+    def tag(self, grabable_ent, wc_taggable_pos):
+        if not self.is_taggable() or not grabable_ent.is_grabable():
+            return
+
+        grabable_body = grabable_ent.get_body()
+
+        #move the body to the taggable pos
+        grabable_body.position = wc_taggable_pos
+
+        #convert world pin coordinates to local body coords
+        lc_grabable_pos = grabable_body.world_to_local(wc_taggable_pos)
+        lc_taggable_pos = self.get_body().world_to_local(wc_taggable_pos)
+
+        #turn off collision checking between the combined items
+        cgrp = self.get_world_entity_manager().alloc_collision_group()
+        self.get_shape().group = cgrp
+        grabable_ent.get_shape().group = cgrp
+        
+        #pin it to the taggable
+        grabable_ent.pin_join(self, lc_grabable_pos, lc_taggable_pos)
+
 
     def unjoin(self, joint_id):
         if self.is_world_bound():
@@ -57,7 +93,6 @@ class WorldEntity(object):
         return self._shape.get_points()
 
     def on_collision(self, other_entity, contacts, normal_coef, data):
-#        print "%s hit %s" % (self, other_entity)
         pass
 
     def tick(self, dt):
@@ -120,6 +155,8 @@ class WorldEntityManager(object):
         self._space.add(joint)
         return self._register_joint(WorldEntityManager.PINJOINT, joint, ent_a, ent_b, (pos_a, pos_b))
 
+
+
     def on_collision(self, shapeA, shapeB, contacts, normal_coef, data):
         ent_a = self._entities[shapeA]
         ent_b = self._entities[shapeB]
@@ -144,10 +181,14 @@ class Player(WorldEntity):
     RIGHT = 1
 
     _hold_joint = None
-    _hand_location = (-10, 0)
-    _try_grab = False
+    _held_entity = None
+    _held_location = None
 
-    def __init__(self, power = 3000):
+    _hand_location = (-12, 0)
+    _try_grab = False
+    _try_tag = False
+
+    def __init__(self, power = 500):
         WorldEntity.__init__(self, (400,400), [(-10,-20),(-10,20),(10,20),(10,-20)], 25, moment=pymunk.inf)
         self._power = power
         self._direction = Player.STOP
@@ -171,21 +212,51 @@ class Player(WorldEntity):
     def end_grabbing(self):
         self._try_grab = False
 
+    def begin_tagging(self):
+        self._try_tag = True
+
+    def end_tagging(self):
+        self._try_tag = False
+
+    def tag(self, target_entity, wc_contact_pos):
+        held_entity = self.get_held_entity()
+        if held_entity:
+            self.drop()
+            target_entity.tag(held_entity, wc_contact_pos)
+
     def drop(self):
         if self._hold_joint:
             self.unjoin(self._hold_joint)
             self._hold_joint = None
+            self._held_entity = None
 
-    def hold(self, entity, entity_pos):
+    def hold(self, entity, wc_contact_pos):
+        if not entity.is_grabable():
+            return
+
         self.drop()
-        joint_id = self.pin_join(entity, self._hand_location, entity_pos)
-        if joint_id:
-            self._hold_joint = joint_id
+
+        lc_for_entity = entity.get_body().world_to_local(wc_contact_pos)
+        entity.get_body().position = self.get_body().local_to_world(self._hand_location)
+        joint_id = self.pin_join(entity, self._hand_location, lc_for_entity)
+        
+        self._hold_joint = joint_id
+        self._held_entity = entity
+        self._held_location = lc_for_entity
+
+    def get_held_entity(self):
+        return self._held_entity
 
     def on_collision(self, entity, contacts, normal_coef, data):
-        if self._try_grab and entity.is_dynamic():
-            self.hold(entity, entity.get_body().world_to_local(contacts[0].position))
+        if not entity.is_dynamic():
+            return
+
+        if self._try_grab and entity.is_grabable():
             self.end_grabbing()
+            self.hold(entity, contacts[0].position)
+        elif self._try_tag and entity.is_taggable() and self.get_held_entity() != entity:
+            self.end_tagging()
+            self.tag(entity, contacts[0].position)
 
     def tick(self, dt):
         body = self.get_body()
@@ -207,8 +278,8 @@ def make_chain(we_manager, length, allow_self_intersection = False):
 
     links = []
     for i in range(length):
-        mass = 5
-        entity = WorldEntity((i*(chain_link_len+2), 400), chain_link_poly, mass)
+        mass = 1 
+        entity = WorldEntity((i*(chain_link_len+2), 400), chain_link_poly, mass, grabable=True, taggable = False)
         links.append(entity)
         we_manager.add_entity(entity, collision_group=cgrp)
 
@@ -240,18 +311,23 @@ def main():
 
     ground_block = WorldEntity((0,-20), [(0,0),(0, 20), (700, 20), (700, 0)], pymunk.inf, friction=15)
     ledge_block = WorldEntity((0,200), [(0,0),(0, 20), (200, 20), (200, 0)], pymunk.inf)
+    moveable_block_1 = WorldEntity((500,200), [(-40,-40),(-40, 40), (40, 40), (40, -40)], 30)
+    moveable_block_2 = WorldEntity((300,200), [(-20,-20),(-20, 20), (20, 20), (20, -20)], 10)
+
     player = Player()
 
     we_manager = WorldEntityManager(space)
     we_manager.add_entity(ground_block, dynamic=False)
     we_manager.add_entity(ledge_block, dynamic=False)
+    we_manager.add_entity(moveable_block_1)
+    we_manager.add_entity(moveable_block_2)
     we_manager.add_entity(player)
     
     space.set_default_collisionpair_func(we_manager.on_collision)
 
     clock = pygame.time.Clock()
     unused_time = 0
-    step_size = 0.015
+    step_size = 0.002
 
     keydown_map = {K_w: False, K_d: False, K_a: False}
     #pygame event loop
@@ -285,6 +361,8 @@ def main():
                     player.jump()
                 elif event.key == K_s:
                     player.begin_grabbing()
+                elif event.key == K_e:
+                    player.begin_tagging()
                 elif event.key == K_q:
                     player.drop()
 
@@ -293,6 +371,8 @@ def main():
                     keydown_map[event.key] = False
                 elif event.key == K_s:
                     player.end_grabbing()
+                elif event.key == K_e:
+                    player.end_tagging()
 
         #perframe actions
         if keydown_map[K_a]:
@@ -308,8 +388,9 @@ def main():
 
         #draw entities
         for entity in we_manager.get_entities():
+            color = (255,255,255)
             points = map(to_scr, entity.get_vertices())
-            pygame.draw.polygon(screen, (255,255,255), points, 1)
+            pygame.draw.polygon(screen, color, points, 1)
 
         #render fps
         text_surf = font.render("fps: %i" % clock.get_fps(), 1, (255,0,0))
