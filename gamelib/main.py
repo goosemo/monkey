@@ -6,7 +6,7 @@ Feel free to put all your game code here, or in other modules in this "gamelib"
 package.
 '''
 
-import data, pymunk, pygame
+import data, pymunk, pygame, sys, math
 from pymunk.vec2d import Vec2d
 from pygame.locals import *
 
@@ -15,8 +15,9 @@ class WorldEntity(object):
     _is_dynamic = True
     _is_taggable = True
     _is_grabable = False
+    _texture_name = None
 
-    def __init__(self, world_pos, vertices, mass, friction=0.15, moment = None, taggable=True, grabable=False):
+    def __init__(self, world_pos, vertices, mass, friction=0.15, moment = None, taggable=True, grabable=False, texture_name=None):
         pymunk_verts = map(Vec2d, vertices)
         
         if not moment:
@@ -30,6 +31,13 @@ class WorldEntity(object):
 
         self._is_taggable = taggable
         self._is_grabable = grabable
+        self._texture_name = texture_name
+
+    def get_texture_name(self):
+        return self._texture_name
+
+    def is_textured(self):
+        return self._texture_name is not None
 
     def is_taggable(self):
         return self._is_taggable
@@ -38,7 +46,7 @@ class WorldEntity(object):
         return self._is_grabable
 
     def is_world_bound(self):
-        return self._world_entity_manager != None
+        return self._world_entity_manager is not None
 
     def is_dynamic(self):
         return self._is_dynamic
@@ -291,6 +299,31 @@ def make_chain(we_manager, length, allow_self_intersection = False):
 def to_scr(v, camera_pos = (0,0)):
     return (v[0] - camera_pos[0], (SCREENSIZE[1]/2)-v[1] + camera_pos[1])
 
+def load_image(name):
+    try:
+        image = pygame.image.load(data.load(name))
+    except pygame.error, message:
+        print "couldn't load %s" % name
+        sys.exit(0)
+   
+    image = image.convert_alpha()
+    return image
+
+class Texture(object):
+    def __init__(self, name, file):
+        self._name = name
+        self._file = file
+        self.image = load_image(file)
+        self.center = (self.image.get_width()/2, self.image.get_height()/2)
+
+TEXTURES = {}
+
+def register_texture(name, filename):
+    TEXTURES[name] = Texture(name, filename)
+
+def get_texture(name):
+    return TEXTURES[name]
+
 def main():
     
     #init pygame
@@ -299,6 +332,8 @@ def main():
     pygame.display.set_caption('### OSUGCC PYWEEK PROTOTYPE')
 
     font = pygame.font.Font(None, 16)
+
+    register_texture('MUD', 'test.png')
 
     #init pymunk
     pymunk.init_pymunk()
@@ -310,7 +345,7 @@ def main():
 
     ground_block = WorldEntity((0,-20), [(0,0),(0, 20), (700, 20), (700, 0)], pymunk.inf, friction=15)
     ledge_block = WorldEntity((0,200), [(0,0),(0, 20), (200, 20), (200, 0)], pymunk.inf)
-    moveable_block_1 = WorldEntity((500,200), [(-40,-40),(-40, 40), (40, 40), (40, -40)], 30)
+    moveable_block_1 = WorldEntity((500,200), [(-40,-40),(-40, 40), (40, 40), (40, -40)], 30, texture_name = 'MUD')
     moveable_block_2 = WorldEntity((300,200), [(-20,-20),(-20, 20), (20, 20), (20, -20)], 10)
     moveable_block_3 = WorldEntity((50,400), [(-20,-20),(-20, 20), (20, 20), (20, -20)], 999)
 
@@ -390,6 +425,14 @@ def main():
 
         #draw entities
         for entity in we_manager.get_entities():
+            if entity.is_textured():
+                texture = get_texture(entity.get_texture_name())
+                image = pygame.transform.rotate(texture.image, entity.get_body().angle * 180/math.pi)
+                shift_vec = Vec2d(-image.get_width()/2, image.get_height()/2)
+                screen.blit(image, to_scr(entity.get_body().position + shift_vec))
+
+            color = (255, 0, 0)
+            pygame.draw.circle(screen, color, to_scr(entity.get_body().position),3)
             color = (255,255,255)
             points = map(to_scr, entity.get_vertices())
             pygame.draw.polygon(screen, color, points, 1)
