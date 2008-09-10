@@ -100,6 +100,10 @@ class WorldEntity(object):
     def get_vertices(self):
         return self._shape.get_points()
 
+    def get_position(self):
+        pos = self.get_body().position
+        return (pos[0], pos[1])
+
     def on_collision(self, other_entity, contacts, normal_coef, data):
         pass
 
@@ -270,6 +274,7 @@ class Player(WorldEntity):
         if abs(body.velocity[0]) < 200:
             body.apply_impulse((self._direction*self._power*dt, 0),(0,0))
 
+
 PIX_PER_M = 40 #pixels per meter
 
 SCREENSIZE = (800, 600)
@@ -296,9 +301,6 @@ def make_chain(we_manager, length, allow_self_intersection = False):
     return links
 
 
-def to_scr(v, camera_pos = (0,0)):
-    return (v[0] - camera_pos[0], (SCREENSIZE[1]/2)-v[1] + camera_pos[1])
-
 def load_image(name):
     try:
         image = pygame.image.load(data.load(name))
@@ -324,6 +326,27 @@ def register_texture(name, filename):
 def get_texture(name):
     return TEXTURES[name]
 
+class View(object):
+    _position = (0,0)
+    
+    def __init__(self, screensize):
+        self.set_screensize(screensize)
+
+    def set_screensize(self, screensize):
+        self._screensize = screensize
+
+    def get_screensize(self):
+        return self._screensize
+
+    def set_position(self, position):
+        self._position = position
+
+    def get_position(self, position):
+        return self._position
+
+    def to_screen(self, v):
+        return (v[0] - self._position[0] + self._screensize[0]/2, (self._screensize[1]/2)-v[1] + self._position[1])
+
 def main():
     
     #init pygame
@@ -343,15 +366,16 @@ def main():
     space.resize_static_hash(dim=10, count=1000)
     space.resize_active_hash(dim=10, count=1000)
 
+    #build some objects for our world
     ground_block = WorldEntity((0,-20), [(0,0),(0, 20), (700, 20), (700, 0)], pymunk.inf, friction=15)
     ledge_block = WorldEntity((0,200), [(0,0),(0, 20), (200, 20), (200, 0)], pymunk.inf)
     moveable_block_1 = WorldEntity((500,200), [(-40,-40),(-40, 40), (40, 40), (40, -40)], 30, texture_name = 'MUD')
     moveable_block_2 = WorldEntity((300,200), [(-20,-20),(-20, 20), (20, 20), (20, -20)], 10)
     moveable_block_3 = WorldEntity((50,400), [(-20,-20),(-20, 20), (20, 20), (20, -20)], 999)
 
-
     player = Player()
 
+    #add the entities to the world
     we_manager = WorldEntityManager(space)
     we_manager.add_entity(ground_block, dynamic=False)
     we_manager.add_entity(ledge_block, dynamic=False)
@@ -360,7 +384,12 @@ def main():
     we_manager.add_entity(moveable_block_3)
     we_manager.add_entity(player)
     
+
+    #set the collisions to be handeled by the world manager
     space.set_default_collisionpair_func(we_manager.on_collision)
+
+    #create a viewport
+    view = View(SCREENSIZE)
 
     clock = pygame.time.Clock()
     unused_time = 0
@@ -423,18 +452,20 @@ def main():
         #let entites know how much time has passed
         we_manager.tick(dt)
 
+        view.set_position(player.get_position())
+
         #draw entities
         for entity in we_manager.get_entities():
             if entity.is_textured():
                 texture = get_texture(entity.get_texture_name())
                 image = pygame.transform.rotate(texture.image, entity.get_body().angle * 180/math.pi)
                 shift_vec = Vec2d(-image.get_width()/2, image.get_height()/2)
-                screen.blit(image, to_scr(entity.get_body().position + shift_vec))
+                screen.blit(image, view.to_screen(entity.get_body().position + shift_vec))
 
             color = (255, 0, 0)
-            pygame.draw.circle(screen, color, to_scr(entity.get_body().position),3)
+            pygame.draw.circle(screen, color, view.to_screen(entity.get_body().position),3)
             color = (255,255,255)
-            points = map(to_scr, entity.get_vertices())
+            points = map(view.to_screen, entity.get_vertices())
             pygame.draw.polygon(screen, color, points, 1)
 
         #render fps
