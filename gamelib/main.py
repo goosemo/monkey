@@ -275,7 +275,7 @@ PIX_PER_M = 40 #pixels per meter
 SCREENSIZE = (800, 600)
 
 chain_link_len = 20 
-chain_link_poly = [(0,0), (0,5), (chain_link_len, 5), (chain_link_len, 0)]
+chain_link_poly = [(-chain_link_len/2, -2.5), (-chain_link_len/2,2.5), (chain_link_len/2, 2.5), (chain_link_len/2, -2.5)]
 
 def make_chain(we_manager, length, allow_self_intersection = False):
     
@@ -291,7 +291,7 @@ def make_chain(we_manager, length, allow_self_intersection = False):
         we_manager.add_entity(entity, collision_group=cgrp)
 
         if i > 0:
-            we_manager.pin_join_entities(links[i], links[i-1], (0,2.5), (chain_link_len, 2.5))
+            we_manager.pin_join_entities(links[i], links[i-1], (-chain_link_len/2,0), (chain_link_len/2, 0))
     
     return links
 
