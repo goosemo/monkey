@@ -184,12 +184,11 @@ class Player(WorldEntity):
     _held_entity = None
     _held_location = None
 
-    _hand_location = (-12, 0)
     _try_grab = False
     _try_tag = False
 
-    def __init__(self, power = 500):
-        WorldEntity.__init__(self, (400,400), [(-10,-20),(-10,20),(10,20),(10,-20)], 25, moment=pymunk.inf)
+    def __init__(self, power = 50000):
+        WorldEntity.__init__(self, (400,400), [(-15,-30),(-15,30),(15,30),(15,-30)], 25, moment=pymunk.inf)
         self._power = power
         self._direction = Player.STOP
         self.stop()
@@ -237,8 +236,8 @@ class Player(WorldEntity):
         self.drop()
 
         lc_for_entity = entity.get_body().world_to_local(wc_contact_pos)
-        entity.get_body().position = self.get_body().local_to_world(self._hand_location)
-        joint_id = self.pin_join(entity, self._hand_location, lc_for_entity)
+        lc_for_player = self.get_body().world_to_local(wc_contact_pos)
+        joint_id = self.pin_join(entity, lc_for_player, lc_for_entity)
         
         self._hold_joint = joint_id
         self._held_entity = entity
@@ -261,13 +260,13 @@ class Player(WorldEntity):
     def tick(self, dt):
         body = self.get_body()
         if abs(body.velocity[0]) < 200:
-            self.get_body().apply_impulse((self._direction*self._power, 0),(0,0))
+            body.apply_impulse((self._direction*self._power*dt, 0),(0,0))
 
 PIX_PER_M = 40 #pixels per meter
 
 SCREENSIZE = (800, 600)
 
-chain_link_len = 15
+chain_link_len = 20 
 chain_link_poly = [(0,0), (0,5), (chain_link_len, 5), (chain_link_len, 0)]
 
 def make_chain(we_manager, length, allow_self_intersection = False):
@@ -289,8 +288,8 @@ def make_chain(we_manager, length, allow_self_intersection = False):
     return links
 
 
-def to_scr(v):
-    return (v[0], (SCREENSIZE[1]/2)-v[1])
+def to_scr(v, camera_pos = (0,0)):
+    return (v[0] - camera_pos[0], (SCREENSIZE[1]/2)-v[1] + camera_pos[1])
 
 def main():
     
@@ -313,6 +312,8 @@ def main():
     ledge_block = WorldEntity((0,200), [(0,0),(0, 20), (200, 20), (200, 0)], pymunk.inf)
     moveable_block_1 = WorldEntity((500,200), [(-40,-40),(-40, 40), (40, 40), (40, -40)], 30)
     moveable_block_2 = WorldEntity((300,200), [(-20,-20),(-20, 20), (20, 20), (20, -20)], 10)
+    moveable_block_3 = WorldEntity((50,400), [(-20,-20),(-20, 20), (20, 20), (20, -20)], 999)
+
 
     player = Player()
 
@@ -321,13 +322,14 @@ def main():
     we_manager.add_entity(ledge_block, dynamic=False)
     we_manager.add_entity(moveable_block_1)
     we_manager.add_entity(moveable_block_2)
+    we_manager.add_entity(moveable_block_3)
     we_manager.add_entity(player)
     
     space.set_default_collisionpair_func(we_manager.on_collision)
 
     clock = pygame.time.Clock()
     unused_time = 0
-    step_size = 0.002
+    step_size = 0.001
 
     keydown_map = {K_w: False, K_d: False, K_a: False}
     #pygame event loop
