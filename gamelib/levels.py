@@ -18,7 +18,9 @@ Level1 = {
         FloorBox((50, 100), height=100, width=20),
 
         FloorBox((-600, 0), width=200),
-        FloorBox((-600, 150), width=20, height=100),
+        FloorBox((-600, 550), width=20, height=550),
+        FloorBox((-500, 450), width=20, height=350),
+        FloorBox((-480, 450), width=200)
     ]
 }
 
