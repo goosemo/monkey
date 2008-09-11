@@ -397,6 +397,7 @@ def main():
     unused_time = 0
     step_size = 0.001
 
+
     keydown_map = {K_w: False, K_d: False, K_a: False}
     #pygame event loop
     is_running = True
@@ -457,8 +458,6 @@ def main():
         view.set_position(player.get_position())
 
         #draw bg
-        screen.blit(bg, (0, 0))
-        screen.blit(bg, (0, 0))
         screen.blit(bg, (0, 0))
 
 
