@@ -3,7 +3,7 @@ import pymunk, world
 class FloorBox(world.BaseEntity):
     def __init__(self, pos, width=100):
         x,y = pos
-        verts = [(x,y-20),(x,y),(x+width,y),(x+width, y-20)]
+        verts = [(0, -20),(0,0),(width,0),(width, -20)]
         world.BaseEntity.__init__(self, pos, verts, pymunk.inf, friction=3, moment=pymunk.inf, dynamic = False)
 
 class Player(world.BaseEntity):
@@ -23,18 +23,10 @@ class Player(world.BaseEntity):
         self.stop()
 
     def left(self):
-	#
-	body = self.get_body()
-        body.velocity[0] = 0
-	#
-	self._direction = Player.LEFT
+    	self._direction = Player.LEFT
 
     def right(self):
-	#
-	body = self.get_body()
-	body.velocity[0] = 0
-        #
-	self._direction = Player.RIGHT
+        self._direction = Player.RIGHT
 
     def stop(self):
         self._direction = Player.STOP
