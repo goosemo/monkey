@@ -355,8 +355,10 @@ def main():
     pygame.display.set_caption('### OSUGCC PYWEEK PROTOTYPE')
 
     font = pygame.font.Font(None, 16)
-
+    
+    bg = load_image("bg.png")
     register_texture('MUD', 'test.png')
+    register_texture('crossPole', 'CrossPoleTexture01.png')
 
     #init pymunk
     pymunk.init_pymunk()
@@ -453,6 +455,12 @@ def main():
         we_manager.tick(dt)
 
         view.set_position(player.get_position())
+
+        #draw bg
+        screen.blit(bg, (0, 0))
+        screen.blit(bg, (0, 0))
+        screen.blit(bg, (0, 0))
+
 
         #draw entities
         for entity in we_manager.get_entities():
