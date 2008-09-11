@@ -12,10 +12,10 @@ class Menu(object):
     def __init__(self, screen):
         self.screen = screen
         self.menu = EzMenu(["New Game", lambda: main.main()], ["Continue", None], ["Quit Game", sys.exit])
-        self.menu.set_highlight_color((255, 0, 0))
+        self.menu.set_highlight_color((255, 255, 255))
         self.menu.set_normal_color((10, 10, 10))
-        self.menu.center_at(480, 320)
-        self.menu.set_font(pygame.font.Font(filepath("FreeSans.ttf"), 16))
+        self.menu.center_at(180, 230)
+        self.menu.set_font(pygame.font.Font(filepath("pointy.ttf"), 26))
         self.main_loop()
   
     def main_loop(self):
