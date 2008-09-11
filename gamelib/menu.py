@@ -1,6 +1,6 @@
 #! /usr/bin/env python
 
-import pygame, sys
+import pygame, sys, data
 from pygame.locals import *
 
 import main
@@ -13,9 +13,9 @@ class Menu(object):
         self.screen = screen
         self.menu = EzMenu(["New Game", lambda: main.main()], ["Continue", None], ["Quit Game", sys.exit])
         self.menu.set_highlight_color((255, 0, 0))
-        self.menu.set_normal_color((0, 0, 0))
+        self.menu.set_normal_color((10, 10, 10))
         self.menu.center_at(480, 320)
-        self.menu.set_font(pygame.font.Font(filepath("font.ttf"), 16))
+        self.menu.set_font(pygame.font.Font(filepath("FreeSans.ttf"), 16))
         self.main_loop()
   
     def main_loop(self):
@@ -31,7 +31,19 @@ class Menu(object):
                     return
         
             self.screen.fill((255, 255, 255))
+            bg = load_image("loadScreen.png")
+            self.screen.blit(bg, (0, 0))
             self.menu.draw(self.screen)
             pygame.display.flip()
         
+
+def load_image(name):
+    try:
+        image = pygame.image.load(data.load(name))
+    except pygame.error, message:
+        print "couldn't load %s" % name
+        sys.exit(0)
+
+    image = image.convert_alpha()
+    return image
         
