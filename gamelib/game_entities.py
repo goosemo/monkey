@@ -1,9 +1,8 @@
 import pymunk, world 
 
 class FloorBox(world.BaseEntity):
-    def __init__(self, pos, width=100):
-        x,y = pos
-        verts = [(0, -20),(0,0),(width,0),(width, -20)]
+    def __init__(self, pos, width=100, height = 20):
+        verts = [(0, -height),(0,0),(width,0),(width, -height)]
         world.BaseEntity.__init__(self, pos, verts, pymunk.inf, friction=3, moment=pymunk.inf, dynamic = False)
 
 class Player(world.BaseEntity):
