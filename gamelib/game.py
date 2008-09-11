@@ -4,27 +4,6 @@ import game_entities, texture, world, levels
 from pymunk.vec2d import Vec2d
 from pygame.locals import *
 
-chain_link_len = 20 
-chain_link_poly = [(-chain_link_len/2, -2.5), (-chain_link_len/2,2.5), (chain_link_len/2, 2.5), (chain_link_len/2, -2.5)]
-
-def make_chain(we_manager, length, allow_self_intersection = False):
-    cgrp = 0
-    if allow_self_intersection:
-        cgrp = we_manager.alloc_collision_group()
-
-    links = []
-    for i in range(length):
-        mass = 1 
-        entity = world.BaseEntity((i*(chain_link_len+2), 400), chain_link_poly, mass, grabable=True, taggable = False, friction=0.1)
-        links.append(entity)
-        we_manager.add_entity(entity, collision_group=cgrp)
-
-        if i > 0:
-            we_manager.pin_join_entities(links[i], links[i-1], (-chain_link_len/2,0), (chain_link_len/2, 0))
-    
-    return links
-
-
 class View(object):
     _position = (0,0)
     
@@ -63,8 +42,12 @@ class WorldInstance(object):
         self._player = player
         self._player.get_body().position = self._level[levels.PLAYER_START]
         self._we_manager.add_entity(self._player)
+        
         for entity in self._level[levels.ELEMENTS]:
             self._we_manager.add_entity(entity)
+
+        for factory in self._level[levels.FACTORIES]:
+            factory.create(self._we_manager)
 
     def get_entities(self):
         return self._we_manager.get_entities()
@@ -81,7 +64,7 @@ def main(screen):
     pymunk.init_pymunk()
 
     player = game_entities.Player()
-    world = WorldInstance(levels.Level1, player)
+    world = WorldInstance(levels.Level3, player)
     view = View(screensize)
 
     texture_manager = texture.TextureManager()

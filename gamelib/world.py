@@ -174,3 +174,7 @@ class EntityManager(object):
         for entity in self.get_entities():
             entity.tick(dt)
 
+class EntityFactory(object):
+    def create(self, entity_manager):
+        pass
+
