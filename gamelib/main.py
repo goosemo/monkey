@@ -17,7 +17,7 @@ class WorldEntity(object):
     _is_grabable = False
     _texture_name = None
 
-    def __init__(self, world_pos, vertices, mass, friction=0.15, moment = None, taggable=True, grabable=False, texture_name=None):
+    def __init__(self, world_pos, vertices, mass, friction=5, moment = None, taggable=True, grabable=False, texture_name=None):
         pymunk_verts = map(Vec2d, vertices)
         
         if not moment:
@@ -186,6 +186,13 @@ class WorldEntityManager(object):
         for entity in self.get_entities():
             entity.tick(dt)
 
+class Balloon(WorldEntity):
+    def __init__(self, power=350):
+        WorldEntity.__init__(self, (500,500), [(-15,-15),(-15,15),(15,15),(15,-15)], 1, friction=0.5, moment=pymunk.inf)
+        self._power = power
+
+    def tick(self, dt):
+        self.get_body().apply_impulse((0,self._power*dt),(0,0))
 
 class Player(WorldEntity):
     STOP = 0
@@ -200,7 +207,7 @@ class Player(WorldEntity):
     _try_tag = False
 
     def __init__(self, power = 50000):
-        WorldEntity.__init__(self, (400,400), [(-15,-30),(-15,30),(15,30),(15,-30)], 25, moment=pymunk.inf)
+        WorldEntity.__init__(self, (400,400), [(-15,-30),(-15,30),(15,30),(15,-30)], 25, friction=0.5, moment=pymunk.inf)
         self._power = power
         self._direction = Player.STOP
         self.stop()
@@ -283,7 +290,6 @@ chain_link_len = 20
 chain_link_poly = [(-chain_link_len/2, -2.5), (-chain_link_len/2,2.5), (chain_link_len/2, 2.5), (chain_link_len/2, -2.5)]
 
 def make_chain(we_manager, length, allow_self_intersection = False):
-    
     cgrp = 0
     if allow_self_intersection:
         cgrp = we_manager.alloc_collision_group()
@@ -291,7 +297,7 @@ def make_chain(we_manager, length, allow_self_intersection = False):
     links = []
     for i in range(length):
         mass = 1 
-        entity = WorldEntity((i*(chain_link_len+2), 400), chain_link_poly, mass, grabable=True, taggable = False)
+        entity = WorldEntity((i*(chain_link_len+2), 400), chain_link_poly, mass, grabable=True, taggable = False, friction=0.1)
         links.append(entity)
         we_manager.add_entity(entity, collision_group=cgrp)
 
@@ -369,7 +375,7 @@ def main():
     space.resize_active_hash(dim=10, count=1000)
 
     #build some objects for our world
-    ground_block = WorldEntity((0,-20), [(0,0),(0, 20), (700, 20), (700, 0)], pymunk.inf, friction=15)
+    ground_block = WorldEntity((0,-20), [(0,0),(0, 20), (700, 20), (700, 0)], pymunk.inf)
     ledge_block = WorldEntity((0,200), [(0,0),(0, 20), (200, 20), (200, 0)], pymunk.inf)
     moveable_block_1 = WorldEntity((500,200), [(-40,-40),(-40, 40), (40, 40), (40, -40)], 30, texture_name = 'MUD')
     moveable_block_2 = WorldEntity((300,200), [(-20,-20),(-20, 20), (20, 20), (20, -20)], 10)
@@ -385,7 +391,6 @@ def main():
     we_manager.add_entity(moveable_block_2)
     we_manager.add_entity(moveable_block_3)
     we_manager.add_entity(player)
-    
 
     #set the collisions to be handeled by the world manager
     space.set_default_collisionpair_func(we_manager.on_collision)
@@ -451,17 +456,16 @@ def main():
         else:
             player.stop()
 
-
         #let entites know how much time has passed
         we_manager.tick(dt)
 
+        #draw entities
         view.set_position(player.get_position())
 
         #draw bg
         screen.blit(bg, (0, 0))
 
 
-        #draw entities
         for entity in we_manager.get_entities():
             if entity.is_textured():
                 texture = get_texture(entity.get_texture_name())
