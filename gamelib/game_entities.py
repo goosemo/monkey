@@ -5,7 +5,7 @@ class Player(world.BaseEntity):
     LEFT = -1
     RIGHT = 1
 
-    def __init__(self, power = 50000):
+    def __init__(self, power = 500000):
         world.BaseEntity.__init__(self, (400,400), [(-15,-30),(-15,30),(15,30),(15,-30)], 25, friction=0.5, moment=pymunk.inf)
         self._power = power
         self._direction = Player.STOP
@@ -17,16 +17,24 @@ class Player(world.BaseEntity):
         self.stop()
 
     def left(self):
-        self._direction = Player.LEFT
+	#
+	body = self.get_body()
+        body.velocity[0] = 0
+	#
+	self._direction = Player.LEFT
 
     def right(self):
-        self._direction = Player.RIGHT
+	#
+	body = self.get_body()
+	body.velocity[0] = 0
+        #
+	self._direction = Player.RIGHT
 
     def stop(self):
         self._direction = Player.STOP
 
     def jump(self):
-        self.get_body().apply_impulse((0,5000), (0,0))
+        self.get_body().apply_impulse((0,6000), (0,0))
 
     def begin_grabbing(self):
         self._try_grab = True
