@@ -47,7 +47,7 @@ class WorldInstance(object):
             self._we_manager.add_entity(entity)
 
         for factory in self._level[levels.FACTORIES]:
-            factory.create(self._we_manager)
+            factory(self._we_manager)
 
     def get_entities(self):
         return self._we_manager.get_entities()
