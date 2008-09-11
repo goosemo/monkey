@@ -3,7 +3,7 @@
 import pygame, sys, data
 from pygame.locals import *
 
-import main
+import game 
 from ezmenu import *
 from data import *
 
@@ -11,7 +11,7 @@ class Menu(object):
  
     def __init__(self, screen):
         self.screen = screen
-        self.menu = EzMenu(["New Game", lambda: main.main()], ["Continue", None], ["Quit Game", sys.exit])
+        self.menu = EzMenu(["New Game", lambda: game.main(self.screen)], ["Quit Game", sys.exit])
         self.menu.set_highlight_color((255, 255, 255))
         self.menu.set_normal_color((10, 10, 10))
         self.menu.center_at(180, 230)
@@ -19,7 +19,7 @@ class Menu(object):
         self.main_loop()
   
     def main_loop(self):
-        while 1:
+        while True:
             events = pygame.event.get()
             self.menu.update(events)
             for e in events:
@@ -35,15 +35,4 @@ class Menu(object):
             self.screen.blit(bg, (0, 0))
             self.menu.draw(self.screen)
             pygame.display.flip()
-        
-
-def load_image(name):
-    try:
-        image = pygame.image.load(data.load(name))
-    except pygame.error, message:
-        print "couldn't load %s" % name
-        sys.exit(0)
-
-    image = image.convert_alpha()
-    return image
         
