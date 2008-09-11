@@ -47,7 +47,7 @@ class WorldInstance(object):
             self._we_manager.add_entity(entity)
 
         for factory in self._level[levels.FACTORIES]:
-            factory(self._we_manager)
+            factory.create(self._we_manager)
 
     def get_entities(self):
         return self._we_manager.get_entities()
@@ -64,7 +64,7 @@ def main(screen):
     pymunk.init_pymunk()
 
     player = game_entities.Player()
-    world = WorldInstance(levels.Level3, player)
+    world = WorldInstance(levels.Level2, player)
     view = View(screensize)
 
     texture_manager = texture.TextureManager()
@@ -102,6 +102,10 @@ def main(screen):
 
                 if event.key == K_ESCAPE:
                     is_running = False
+                elif event.key == K_v:
+                    make_chain(we_manager, 8, True)
+                elif event.key == K_c:
+                    make_chain(we_manager, 8, False)
                 elif event.key == K_SPACE or event.key == K_UP:
                     player.jump()
                 elif event.key == K_s:
