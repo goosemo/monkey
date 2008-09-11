@@ -2,7 +2,7 @@ import pymunk
 from pymunk.vec2d import Vec2d
 
 class BaseEntity(object):
-    def __init__(self, world_pos, vertices, mass, friction=5, moment = None, taggable=True, grabable=False, texture_name=None):
+    def __init__(self, world_pos, vertices, mass, friction=5, moment = None, taggable=True, grabable=False, texture_name=None, dynamic=True):
         self._world_entity_manager = None
 
         self._is_dynamic = True
@@ -21,6 +21,7 @@ class BaseEntity(object):
         self._is_taggable = taggable
         self._is_grabable = grabable
         self._texture_name = texture_name
+        self._is_dynamic = dynamic
 
     def get_texture_name(self):
         return self._texture_name
@@ -137,15 +138,14 @@ class EntityManager(object):
         
         return True
 
-    def add_entity(self, entity, dynamic=True, collision_group=0):
+    def add_entity(self, entity, collision_group=0):
         shape = entity.get_shape()
         shape.group = collision_group
 
         entity.on_bind_world(self)
-        entity._is_dynamic = dynamic
         self._entities[shape] = entity
 
-        if dynamic:
+        if entity.is_dynamic():
             self._space.add(entity.get_body(), shape)
         else:
             self._space.add_static(shape)

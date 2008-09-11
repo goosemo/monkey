@@ -1,5 +1,5 @@
 import data, pymunk, pygame, sys, math
-import game_entities, texture, world
+import game_entities, texture, world, levels
 
 from pymunk.vec2d import Vec2d
 from pygame.locals import *
@@ -44,50 +44,51 @@ class View(object):
         return self._position
 
     def to_screen(self, v):
-        return (v[0] - self._position[0] + self._screensize[0]/2, (self._screensize[1]/2)-v[1] + self._position[1])
+        return (int(v[0] - self._position[0] + self._screensize[0]/2), int((self._screensize[1]/2)-v[1] + self._position[1]))
 
+class WorldInstance(object):
+    def __init__(self, level, player):
+        self._space = pymunk.Space()
+        self._space.gravity = (0.0, -9.8 * 40)
+        self._space.damping = 0.98
+        self._space.resize_static_hash(dim=10, count=1000)
+        self._space.resize_active_hash(dim=10, count=1000)
+        
+        self._we_manager = world.EntityManager(self._space)
+
+        self._space.set_default_collisionpair_func(self._we_manager.on_collision)
+
+        self._level = level
+
+        self._player = player
+        self._player.get_body().position = self._level[levels.PLAYER_START]
+        self._we_manager.add_entity(self._player)
+        for entity in self._level[levels.ELEMENTS]:
+            self._we_manager.add_entity(entity)
+
+    def get_entities(self):
+        return self._we_manager.get_entities()
+
+    def tick(self, dt):
+        self._we_manager.tick(dt)
+
+    def get_space(self):
+        return self._space
+       
 def main(screen):
-   
     screensize = (screen.get_width(), screen.get_height())
-    pygame.display.init(screensize)
-    screen = pygame.display.get_surface()
-    font = pygame.font.Font(None, 16)
-    
+
+    pymunk.init_pymunk()
+
+    player = game_entities.Player()
+    world = WorldInstance(levels.Level1, player)
+    view = View(screensize)
+
     texture_manager = texture.TextureManager()
     texture_manager.register_texture('MUD', 'test.png')
     texture_manager.register_texture('crossPole', 'CrossPoleTexture01.png')
 
-    #init pymunk
-    pymunk.init_pymunk()
-    space = pymunk.Space()
-    space.gravity = (0.0, -9.8 * 40)
-    space.damping = 0.98
-    space.resize_static_hash(dim=10, count=1000)
-    space.resize_active_hash(dim=10, count=1000)
-
-    #build some objects for our world
-    ground_block = world.BaseEntity((0,-20), [(0,0),(0, 20), (700, 20), (700, 0)], pymunk.inf)
-    ledge_block = world.BaseEntity((0,200), [(0,0),(0, 20), (200, 20), (200, 0)], pymunk.inf)
-    moveable_block_1 = world.BaseEntity((500,200), [(-40,-40),(-40, 40), (40, 40), (40, -40)], 30, texture_name = 'MUD')
-    moveable_block_2 = world.BaseEntity((300,200), [(-20,-20),(-20, 20), (20, 20), (20, -20)], 10)
-    moveable_block_3 = world.BaseEntity((50,400), [(-20,-20),(-20, 20), (20, 20), (20, -20)], 999)
-
-    player = game_entities.Player()
-
-    #add the entities to the world
-    we_manager = world.EntityManager(space)
-    we_manager.add_entity(ground_block, dynamic=False)
-    we_manager.add_entity(ledge_block, dynamic=False)
-    we_manager.add_entity(moveable_block_1)
-    we_manager.add_entity(moveable_block_2)
-    we_manager.add_entity(moveable_block_3)
-    we_manager.add_entity(player)
-
-    #set the collisions to be handeled by the world manager
-    space.set_default_collisionpair_func(we_manager.on_collision)
-
-    #create a viewport
-    view = View(screensize)
+    font = pygame.font.Font(None, 16)
 
     clock = pygame.time.Clock()
     unused_time = 0
@@ -100,6 +101,7 @@ def main(screen):
         screen.fill((0x28,0x08b,0xd7))
 
         #perform physics in uniform steps
+        space = world.get_space()
         dt = clock.tick()/1000.0
         unused_time += dt
         while(unused_time > step_size):
@@ -147,12 +149,12 @@ def main(screen):
             player.stop()
 
         #let entites know how much time has passed
-        we_manager.tick(dt)
+        world.tick(dt)
 
         #draw entities
         view.set_position(player.get_position())
 
-        for entity in we_manager.get_entities():
+        for entity in world.get_entities():
             if entity.is_textured():
                 tex = texture_manager.get_texture(entity.get_texture_name())
                 image = pygame.transform.rotate(tex.image, entity.get_body().angle * 180/math.pi)
