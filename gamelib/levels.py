@@ -1,5 +1,6 @@
 import world
 from game_entities import *
+from level_helpers import *
 
 LEVEL_NAME = 0
 PLAYER_START = 1
@@ -43,3 +44,6 @@ Level3 = {
 }
 
 Levels = [Level1]
+
+
+

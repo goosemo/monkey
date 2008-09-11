@@ -1,36 +1,5 @@
 import pymunk, world 
 
-CHAIN_LINK_LEN = 15
-CHAIN_LINK_POLY = [(-CHAIN_LINK_LEN/2, -2.5), (-CHAIN_LINK_LEN/2,2.5), (CHAIN_LINK_LEN/2, 2.5), (CHAIN_LINK_LEN/2, -2.5)]
-
-class ChainFactory(world.EntityFactory):
-    def __init__(self, pos, length):
-        self._pos = pos
-        self._length = length
-
-    def create(self, entity_manager):
-        x,y = self._pos
-        links = []
-        for i in range(self._length):
-            mass = 1
-            entity = world.BaseEntity((x +i*(CHAIN_LINK_LEN+2), y), CHAIN_LINK_POLY, mass, grabable=True, taggable = False, friction=0.1)
-            links.append(entity)
-            entity_manager.add_entity(entity)
-
-            if i > 0:
-                entity_manager.pin_join_entities(links[i], links[i-1], (-CHAIN_LINK_LEN/2,0), (CHAIN_LINK_LEN/2, 0))
-
-class MovableBox(world.BaseEntity):
-    def __init__(self, pos, width=100, height = 100, mass=5, friction=3, taggable = True, grabable = True):
-        half_w, half_h = (width/2, height/2)
-        verts = [(-half_w, -half_h),(-half_w,half_h),(half_w,half_h),(half_w, -half_h)]
-        world.BaseEntity.__init__(self, pos, verts, mass, dynamic = True, taggable = taggable, grabable=grabable)
-
-class FloorBox(world.BaseEntity):
-    def __init__(self, pos, width=100, height = 20, taggable=False, grabable=False):
-        verts = [(0, -height),(0,0),(width,0),(width, -height)]
-        world.BaseEntity.__init__(self, pos, verts, pymunk.inf, friction=3, moment=pymunk.inf, dynamic = False, taggable=False, grabable=False)
-
 class Player(world.BaseEntity):
     STOP = 0
     LEFT = -1
