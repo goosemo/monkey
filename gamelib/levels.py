@@ -13,6 +13,12 @@ Level1 = {
     ELEMENTS: [
         FloorBox((0,0), width=250),
         FloorBox((50, 100), width=100),
+        FloorBox((50, 100), width=100),
+        FloorBox((-600, -100), width=1200),
+        FloorBox((50, 100), height=100, width=20),
+
+        FloorBox((-600, 0), width=200),
+        FloorBox((-600, 150), width=20, height=100),
     ]
 }
 
