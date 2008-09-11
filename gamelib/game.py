@@ -93,7 +93,7 @@ def main(screen):
     unused_time = 0
     step_size = 0.001
 
-    keydown_map = {K_w: False, K_d: False, K_a: False}
+    keydown_map = {K_w: False, K_d: False, K_a: False, K_LEFT: False, K_RIGHT: False}
     #pygame event loop
     is_running = True
     while is_running:
@@ -118,9 +118,9 @@ def main(screen):
                 if event.key == K_ESCAPE:
                     is_running = False
                 elif event.key == K_v:
-                    make_chain(we_manager, 15, True)
+                    make_chain(we_manager, 8, True)
                 elif event.key == K_c:
-                    make_chain(we_manager, 15, False)
+                    make_chain(we_manager, 8, False)
                 elif event.key == K_SPACE:
                     player.jump()
                 elif event.key == K_s:
@@ -139,9 +139,9 @@ def main(screen):
                     player.end_tagging()
 
         #perframe actions
-        if keydown_map[K_a]:
+        if keydown_map[K_a] or keydown_map[K_LEFT]:
             player.left()
-        elif keydown_map[K_d]:
+        elif keydown_map[K_d] or keydown_map[K_RIGHT]:
             player.right()
         else:
             player.stop()

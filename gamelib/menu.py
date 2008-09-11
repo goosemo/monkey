@@ -15,7 +15,7 @@ class Menu(object):
         self.menu.set_highlight_color((255, 255, 255))
         self.menu.set_normal_color((10, 10, 10))
         self.menu.center_at(180, 230)
-        self.menu.set_font(pygame.font.Font(filepath("pointy.ttf"), 26))
+        self.menu.set_font(pygame.font.Font(filepath("pointy.ttf"), 36))
         self.main_loop()
   
     def main_loop(self):
