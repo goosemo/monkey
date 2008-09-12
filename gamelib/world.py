@@ -7,6 +7,7 @@ class BaseEntity(object):
 
         self._is_dynamic = True
 
+        self._verts = vertices
         pymunk_verts = map(Vec2d, vertices)
         
         if not moment:
@@ -26,6 +27,28 @@ class BaseEntity(object):
 
     def get_texture_name(self):
         return self._texture_name
+
+    def get_bounding_rect(self):
+        verts = self.get_vertices()
+        
+        min_x, min_y = verts[0]
+        max_x, max_y = verts[0]
+
+        for x,y in verts:
+            if x < min_x:
+                min_x = x
+            if x > max_x:
+                max_x =x 
+            if y < min_y:
+                min_y = y
+            if y > max_y:
+                max_y = y
+
+        return ((min_x, min_y), (max_x, max_y))
+
+    def get_texture_origin(self):
+        min_v, max_v = self.get_bounding_rect()
+        return (min_v[0], max_v[1])
 
     def is_textured(self):
         return self._texture_name is not None

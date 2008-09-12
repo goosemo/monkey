@@ -90,8 +90,6 @@ def main(screen):
     texture_manager.register_texture('balloon', 'Balloon.png')
     texture_manager.register_texture('crate1', 'Crate001.png')
     texture_manager.register_texture('floorBox', 'FloorBox1.png')
-    centeredTextures = ["monkey", "crate1", "balloon", "chain",]
-    repeatTextures = ["vertPole","floorBox"]    
 
     font = pygame.font.Font(None, 16)
     timerFont = pygame.font.Font(data.filepath("pointy.ttf"), 24)
@@ -117,6 +115,7 @@ def main(screen):
     while is_running:
         screen.fill((0x28,0x08b,0xd7))
         screen.blit(hud,(0,0))
+
         #perform physics in uniform steps
         space = world.get_space()
         dt = clock.tick()/1000.0
@@ -191,13 +190,9 @@ def main(screen):
 
         for entity in world.get_entities():
             if entity.is_textured():
-                tex = texture_manager.get_texture(entity.get_texture_name())
+                tex = texture_manager.get_texture_map(entity)
                 image = pygame.transform.rotate(tex.image, entity.get_body().angle * 180/math.pi)
-                shift_vec = Vec2d(-image.get_width()/2, image.get_height()/2)
-                if entity.get_texture_name() not in centeredTextures :
-                    screen.blit(image, view.to_screen(entity.get_body().position))
-                else:
-                    screen.blit(image, view.to_screen(entity.get_body().position + shift_vec))
+                screen.blit(image, view.to_screen(entity.get_texture_origin()))
 
             color = (255, 0, 0)
             pygame.draw.circle(screen, color, view.to_screen(entity.get_body().position),3)
