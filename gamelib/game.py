@@ -32,7 +32,7 @@ class WorldInstance(object):
 
     def _init_level(self, level_num):
         self._space = pymunk.Space()
-        self._space.gravity = (0.0, -9.8 * 40)
+        self._space.gravity = (0.0, -9.8 * 45)
         self._space.damping = 0.98
         self._space.resize_static_hash(dim=10, count=1000)
         self._space.resize_active_hash(dim=10, count=1000)
@@ -112,10 +112,6 @@ def main(screen):
 
                 if event.key == K_ESCAPE:
                     is_running = False
-                elif event.key == K_v:
-                    make_chain(we_manager, 8, True)
-                elif event.key == K_c:
-                    make_chain(we_manager, 8, False)
                 elif event.key == K_SPACE or event.key == K_UP:
                     player.jump()
                 elif event.key == K_s:

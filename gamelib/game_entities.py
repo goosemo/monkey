@@ -5,8 +5,8 @@ class Player(world.BaseEntity):
     LEFT = -1
     RIGHT = 1
 
-    def __init__(self, power = 50000):
-        world.BaseEntity.__init__(self, (400,400), [(-15,-30),(-15,30),(15,30),(15,-30)], 25, friction=0.5, moment=pymunk.inf)
+    def __init__(self, power = 40000):
+        world.BaseEntity.__init__(self, (400,400), [(-15,-30),(-15,30),(15,30),(15,-30)], 25, friction=0.4, moment=pymunk.inf)
         self._power = power
         self._direction = Player.STOP
         self._hold_joint = None
@@ -81,6 +81,6 @@ class Player(world.BaseEntity):
 
     def tick(self, dt):
         body = self.get_body()
-        if abs(body.velocity[0]) < 150:
+        if abs(body.velocity[0]) < 250:
             body.apply_impulse((self._direction*self._power*dt, 0),(0,0))
 

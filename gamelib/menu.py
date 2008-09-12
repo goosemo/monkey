@@ -16,6 +16,11 @@ class Menu(object):
         self.menu.set_normal_color((10, 10, 10))
         self.menu.center_at(180, 230)
         self.menu.set_font(pygame.font.Font(filepath("pointy.ttf"), 36))
+
+        #start music playing forever
+#        pygame.mixer.music.load(data.filepath('felix8.xm'))
+#        pygame.mixer.music.play(-1)
+
         self.main_loop()
   
     def main_loop(self):

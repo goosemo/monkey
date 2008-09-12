@@ -2,7 +2,7 @@ import pymunk
 from pymunk.vec2d import Vec2d
 
 class BaseEntity(object):
-    def __init__(self, world_pos, vertices, mass, friction=5, moment = None, taggable=True, grabable=False, texture_name=None, dynamic=True):
+    def __init__(self, world_pos, vertices, mass, friction=0.8, moment = None, taggable=True, grabable=False, texture_name=None, dynamic=True):
         self._world_entity_manager = None
 
         self._is_dynamic = True
