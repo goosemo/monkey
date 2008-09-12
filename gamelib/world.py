@@ -22,6 +22,7 @@ class BaseEntity(object):
         self._is_grabable = grabable
         self._texture_name = texture_name
         self._is_dynamic = dynamic
+        self._time_passed = 0.0
 
     def get_texture_name(self):
         return self._texture_name
@@ -98,7 +99,10 @@ class BaseEntity(object):
         pass
 
     def tick(self, dt):
-        pass
+        self._time_passed += dt
+
+    def get_time_passed(self):
+        return self._time_passed
 
 class EntityManager(object):
     PINJOINT = 0
@@ -171,6 +175,13 @@ class EntityManager(object):
     def tick(self, dt):
         for entity in self.get_entities():
             entity.tick(dt)
+
+    def get_time_passed(self):
+        time_passed = 0.0
+        for entity in self.get_entities():
+            time_passed += entity.get_time_passed()
+
+        return time_passed
 
 class EntityFactory(object):
     def create(self, entity_manager):

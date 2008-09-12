@@ -65,6 +65,9 @@ class WorldInstance(object):
     def tick(self, dt):
         self._we_manager.tick(dt)
 
+    def get_time_passed(self):
+        return self._we_manager.get_time_passed()
+
     def get_space(self):
         return self._space
        
@@ -91,12 +94,24 @@ def main(screen):
     repeatTextures = ["vertPole","floorBox"]    
 
     font = pygame.font.Font(None, 16)
+    timerFont = pygame.font.Font(data.filepath("pointy.ttf"), 24)
 
     clock = pygame.time.Clock()
+    time = pygame.time
+    MaxTime = 200
+    time_elapsed = 0
+    text_timer = timerFont.render("%4i" % MaxTime, 4, (255,255,255))
+
+
     unused_time = 0
     step_size = 0.001
 
     keydown_map = {K_w: False, K_d: False, K_a: False, K_LEFT: False, K_RIGHT: False}
+
+    #preprime event timers
+    pygame.time.set_timer(USEREVENT, 1000)
+
+
     #pygame event loop
     is_running = True
     while is_running:
@@ -143,6 +158,23 @@ def main(screen):
                 elif event.key == K_e:
                     player.end_tagging()
 
+            elif event.type == USEREVENT:
+                time_elapsed += 1
+                pygame.time.set_timer(USEREVENT, 1000)
+                time_left = MaxTime - time_elapsed
+
+                if time_left == 0:
+                    time_elapsed = 0
+                    world.next_level()        
+                #render timer
+                if (time_left > 10):
+                    color = (255,255,255)
+                else:
+                    color = (255,0,0)
+        
+                text_timer = timerFont.render("%4i" % time_left, 4, color)
+
+
         #perframe actions
         if keydown_map[K_a] or keydown_map[K_LEFT]:
             player.left()
@@ -173,9 +205,22 @@ def main(screen):
             points = map(view.to_screen, entity.get_vertices())
             pygame.draw.polygon(screen, color, points, 1)
 
-        #render fps
+        #render fps & timer
         text_surf = font.render("fps: %i" % clock.get_fps(), 1, (255,0,0))
         screen.blit(text_surf, (5, 5))
+        screen.blit(text_timer, (370, 65))
+
+
+        
+        
+        #if pygame.event.wait() == USEREVENT:
+        #    time_elapse += 1
+        #    pygame.time.set_timer(USEREVENT, 1000)
+
+
+        #if time_left == 0:
+        #    time_elapsed = 0
+        #    world.next_level()
 
         pygame.display.flip()
 
