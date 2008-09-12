@@ -6,7 +6,9 @@ class Player(world.BaseEntity):
     RIGHT = 1
 
     def __init__(self, power = 40000):
-        world.BaseEntity.__init__(self, (400,400), [(-15,-30),(-15,30),(15,30),(15,-30)], 25, friction=0.4, moment=pymunk.inf)
+        world.BaseEntity.__init__(self, (400,400), [(-15,-30),(-15,70),(15,70),(15,-30)], 
+            25, friction=0.4, moment=pymunk.inf, texture_name="monkey")
+
         self._power = power
         self._direction = Player.STOP
         self._hold_joint = None

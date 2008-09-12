@@ -70,6 +70,7 @@ class WorldInstance(object):
        
 def main(screen):
     screensize = (screen.get_width(), screen.get_height())
+    hud = data.load_image("headerCropped.png")
 
     pymunk.init_pymunk()
 
@@ -79,7 +80,15 @@ def main(screen):
 
     texture_manager = texture.TextureManager()
     texture_manager.register_texture('MUD', 'test.png')
-    texture_manager.register_texture('crossPole', 'CrossPoleTexture01.png')
+    texture_manager.register_texture('monkey', 'monkey.png')
+
+    texture_manager.register_texture('vertPole', 'VerticalPoleSmall.png')
+    texture_manager.register_texture('chain', 'Chain01.png')
+    texture_manager.register_texture('balloon', 'Balloon.png')
+    texture_manager.register_texture('crate1', 'Crate001.png')
+    texture_manager.register_texture('floorBox', 'FloorBox1.png')
+    centeredTextures = ["monkey", "crate1", "balloon", "chain",]
+    repeatTextures = ["vertPole","floorBox"]    
 
     font = pygame.font.Font(None, 16)
 
@@ -92,7 +101,7 @@ def main(screen):
     is_running = True
     while is_running:
         screen.fill((0x28,0x08b,0xd7))
-
+        screen.blit(hud,(0,0))
         #perform physics in uniform steps
         space = world.get_space()
         dt = clock.tick()/1000.0
@@ -153,7 +162,10 @@ def main(screen):
                 tex = texture_manager.get_texture(entity.get_texture_name())
                 image = pygame.transform.rotate(tex.image, entity.get_body().angle * 180/math.pi)
                 shift_vec = Vec2d(-image.get_width()/2, image.get_height()/2)
-                screen.blit(image, view.to_screen(entity.get_body().position + shift_vec))
+                if entity.get_texture_name() not in centeredTextures :
+                    screen.blit(image, view.to_screen(entity.get_body().position))
+                else:
+                    screen.blit(image, view.to_screen(entity.get_body().position + shift_vec))
 
             color = (255, 0, 0)
             pygame.draw.circle(screen, color, view.to_screen(entity.get_body().position),3)

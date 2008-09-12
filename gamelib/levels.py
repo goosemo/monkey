@@ -17,11 +17,13 @@ Level1 = {
         FloorBox((50, 100), width=100),
         FloorBox((50, 100), width=100),
         FloorBox((-600, -100), width=1200),
-        FloorBox((50, 100), height=100, width=20),
+        MastBox((50, 100), height=100),
+        
+        MovableBox((100,200), width=40, height=40, mass = 10),
 
         FloorBox((-600, 0), width=200),
-        FloorBox((-600, 550), width=20, height=550),
-        FloorBox((-500, 450), width=20, height=350),
+        MastBox((-600, 550), height=550),
+        MastBox((-500, 450), height=350),
         FloorBox((-480, 450), width=200)
     ],
 
