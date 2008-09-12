@@ -128,8 +128,6 @@ def main(screen):
                     world.previous_level()  
                 elif event.key == K_RIGHTBRACKET:
                     world.next_level()
-                else:
-                    print event.key
 
 
             elif event.type == KEYUP:
