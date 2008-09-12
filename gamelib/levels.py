@@ -10,21 +10,57 @@ FACTORIES = 3
 Level1 = {
     LEVEL_NAME: "Monkey on a Boat",
 
-    PLAYER_START: (25, 25),
+    PLAYER_START: (-150, 1000),
     
     ELEMENTS: [
-        FloorBox((0,0), width=250),
-        FloorBox((50, 100), width=100),
-        FloorBox((50, 100), width=100),
-        FloorBox((-600, -100), width=1200),
-        MastBox((50, 100), height=100),
+
+        # Two main masts that hold level together
+        MastBox((-250, 900), height=1000),
+        MastBox((250, 900), height=1000),
+
+        # The base/floor of the level
+        FloorBox((-250,0), width=500),
+
+        # These are the leaves that come out into the level
+
+        #   left side
+        #           x    y
+        FloorBox((-280, 800), width=250),
+        FloorBox((-280, 500), width=250),
+        FloorBox((-280, 200), width=250),
+
+
+        #   right side
+        #          x    y
+        FloorBox(( 80, 650), width=250),
+        FloorBox(( 80, 350), width=250),
+
+
+        # Now for the uprights to make one use their chains
         
+        #   left side
+        #          x    y
+        MastBox((-130, 600), height=100),
+        MastBox((-130, 300), height=100),
+
+        #   right side
+        #         x    y
+        MastBox((140, 750), height=100),
+        MastBox((140, 450), height=100),
+
+        
+        # This is where the good to collect are placed
+        
+        #   left side
+        Banana((-150,550)),
+        Bananas((-150,250)),
+
+        #   right side
+        Banana((200,800)),
+        Bananas((200,500)),
+
         MovableBox((100,200), width=40, height=40, mass = 10),
 
-        FloorBox((-600, 0), width=200),
-        MastBox((-600, 550), height=550),
-        MastBox((-500, 450), height=350),
-        FloorBox((-480, 450), width=200)
     ],
 
     FACTORIES: [],

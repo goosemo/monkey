@@ -88,6 +88,8 @@ def main(screen):
     texture_manager.register_texture('balloon', 'Balloon.png')
     texture_manager.register_texture('crate1', 'Crate001.png')
     texture_manager.register_texture('floorBox', 'FloorBox1.png')
+    texture_manager.register_texture('banana', 'Banana.png')
+    texture_manager.register_texture('bananas', 'BananaS.png')
 
     pymunk.init_pymunk()
 

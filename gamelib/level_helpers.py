@@ -21,6 +21,18 @@ def MovableBox(pos, width=50, height=50, mass=5, **kwargs):
     
     return (lambda: world.BaseEntity(pos, verts, mass, dynamic=True, texture_name="crate1", **kwargs))
 
+def Banana(pos, width=40, height=40, mass=5, **kwargs):
+    half_w, half_h = (width/2, height/2)
+    verts = [(-half_w, -half_h),(-half_w,half_h),(half_w,half_h),(half_w, -half_h)]
+    
+    return (lambda: world.BaseEntity(pos, verts, mass, dynamic=True, texture_name="banana", **kwargs))
+
+def Bananas(pos, width=46, height=46, mass=5, **kwargs):
+    half_w, half_h = (width/2, height/2)
+    verts = [(-half_w, -half_h),(-half_w,half_h),(half_w,half_h),(half_w, -half_h)]
+    
+    return (lambda: world.BaseEntity(pos, verts, mass, dynamic=True, texture_name="bananas", **kwargs))
+
 def FloorBox(pos, width=100, height=40, **kwargs):
     verts = [(0, -height),(0,0),(width,0),(width, -height)]
     return (lambda: world.BaseEntity(pos, verts, pymunk.inf, dynamic=False, texture_name="floorBox", **kwargs))
