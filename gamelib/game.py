@@ -26,11 +26,14 @@ class View(object):
         return (int(v[0] - self._position[0] + self._screensize[0]/2), int((self._screensize[1]/2)-v[1] + self._position[1]))
 
 class WorldInstance(object):
-    def __init__(self, player, level_num=1):
+    def __init__(self, player, texture_manager, level_num=1):
         self._player = player
+        self._texture_manager = texture_manager
         self._init_level(level_num)
 
     def _init_level(self, level_num):
+        self._texture_manager.clear_texture_maps()
+
         self._space = pymunk.Space()
         self._space.gravity = (0.0, -9.8 * 45)
         self._space.damping = 0.98
@@ -38,7 +41,6 @@ class WorldInstance(object):
         self._space.resize_active_hash(dim=10, count=1000)
         
         self._we_manager = world.EntityManager(self._space)
-
         self._space.set_default_collisionpair_func(self._we_manager.on_collision)
 
         self._level_num = level_num
@@ -73,13 +75,9 @@ class WorldInstance(object):
        
 def main(screen):
     screensize = (screen.get_width(), screen.get_height())
+    
     hud = data.load_image("headerCropped.png")
-
-    pymunk.init_pymunk()
-
-    player = game_entities.Player()
-    world = WorldInstance(player, level_num = 1)
-    view = View(screensize)
+    hud_shift = (screensize[0]  - hud.get_width())/2
 
     texture_manager = texture.TextureManager()
     texture_manager.register_texture('MUD', 'test.png')
@@ -90,6 +88,12 @@ def main(screen):
     texture_manager.register_texture('balloon', 'Balloon.png')
     texture_manager.register_texture('crate1', 'Crate001.png')
     texture_manager.register_texture('floorBox', 'FloorBox1.png')
+
+    pymunk.init_pymunk()
+
+    player = game_entities.Player()
+    world = WorldInstance(player, texture_manager, level_num = 1)
+    view = View(screensize)
 
     font = pygame.font.Font(None, 16)
     timerFont = pygame.font.Font(data.filepath("pointy.ttf"), 24)
@@ -114,8 +118,6 @@ def main(screen):
     is_running = True
     while is_running:
         screen.fill((0x28,0x08b,0xd7))
-        screen.blit(hud,(0,0))
-
         #perform physics in uniform steps
         space = world.get_space()
         dt = clock.tick()/1000.0
@@ -200,22 +202,11 @@ def main(screen):
             points = map(view.to_screen, entity.get_vertices())
             pygame.draw.polygon(screen, color, points, 1)
 
-        #render fps & timer
+        #render hud, fps, & timer
+        screen.blit(hud,(hud_shift,0))
         text_surf = font.render("fps: %i" % clock.get_fps(), 1, (255,0,0))
         screen.blit(text_surf, (5, 5))
-        screen.blit(text_timer, (370, 65))
-
-
-        
-        
-        #if pygame.event.wait() == USEREVENT:
-        #    time_elapse += 1
-        #    pygame.time.set_timer(USEREVENT, 1000)
-
-
-        #if time_left == 0:
-        #    time_elapsed = 0
-        #    world.next_level()
+        screen.blit(text_timer, (370 + hud_shift, 65))
 
         pygame.display.flip()
 

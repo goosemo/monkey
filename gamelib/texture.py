@@ -13,8 +13,9 @@ def wrld_to_img(verts, min_v):
     return [(x-m_x,-(y-m_y)) for x,y in verts]
 
 class TextureManager(object):
-    _textures = {}
-    _texture_maps = {}
+    def __init__(self):
+        self._textures = {}
+        self.clear_texture_maps()
 
     def register_texture(self, name, filename):
         image = data.load_image(filename)
@@ -54,3 +55,6 @@ class TextureManager(object):
         self._texture_maps[entity] = final_texture
 
         return final_texture
+    
+    def clear_texture_maps(self):
+        self._texture_maps = {}

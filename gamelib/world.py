@@ -206,7 +206,3 @@ class EntityManager(object):
 
         return time_passed
 
-class EntityFactory(object):
-    def create(self, entity_manager):
-        pass
-
