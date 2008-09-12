@@ -18,6 +18,7 @@ class Player(world.BaseEntity):
         self._try_grab = False
         self._try_tag = False
         self._avail_jumps = Player.MAX_JUMPS
+        self._can_begin_jump = False
         self.stop()
 
     def left(self):
@@ -30,9 +31,14 @@ class Player(world.BaseEntity):
         self._direction = Player.STOP
 
     def jump(self):
+        if self._avail_jumps == Player.MAX_JUMPS and not self._can_begin_jump:
+            return
+
         if self._avail_jumps > 0:
+            self._can_begin_jump = False
             self._avail_jumps -= 1
-            self.get_body().apply_impulse((0,8000), (0,0))
+            jump_factor = 1/(Player.MAX_JUMPS - self._avail_jumps)
+            self.get_body().apply_impulse((0,4000 + 4000 * jump_factor), (0,0))
 
     def begin_grabbing(self):
         self._try_grab = True
@@ -75,23 +81,28 @@ class Player(world.BaseEntity):
         return self._held_entity
 
     def on_collision(self, entity, contacts, normal_coef, data):
+
+        #see if we're standing on something we can jump off of
         min_entity_v, max_entity_v = entity.get_bounding_rect()
         min_player_v, max_player_v = self.get_bounding_rect()
-
         if abs(max_entity_v[1] - min_player_v[1]) < 0.2:
             self._avail_jumps = Player.MAX_JUMPS
+            self._can_begin_jump = True
 
-        if not entity.is_dynamic():
-            return
-
+        #handle pick-up and tagging of entities
         if self._try_grab and entity.is_grabable():
             self.end_grabbing()
             self.hold(entity, contacts[0].position)
+
         elif self._try_tag and entity.is_taggable() and self.get_held_entity() != entity:
             self.end_tagging()
             self.tag(entity, contacts[0].position)
 
     def tick(self, dt):
+        #disable the ability to jump each tick
+        #jumps are re-enabled in on_collision if on top of a block
+        self._can_begin_jump = False
+
         body = self.get_body()
         if abs(body.velocity[0]) < 250:
             body.apply_impulse((self._direction*self._power*dt, 0),(0,0))
