@@ -5,6 +5,8 @@ class Player(world.BaseEntity):
     LEFT = -1
     RIGHT = 1
 
+    MAX_JUMPS = 2 
+
     def __init__(self, power = 40000):
         world.BaseEntity.__init__(self, (400,400), [(-21,-48),(-21,48),(21,48),(21,-48)], 
             25, friction=0.4, moment=pymunk.inf, texture_name="monkey")
@@ -15,7 +17,7 @@ class Player(world.BaseEntity):
         self._held_entity = None
         self._try_grab = False
         self._try_tag = False
-
+        self._avail_jumps = Player.MAX_JUMPS
         self.stop()
 
     def left(self):
@@ -28,7 +30,9 @@ class Player(world.BaseEntity):
         self._direction = Player.STOP
 
     def jump(self):
-        self.get_body().apply_impulse((0,8000), (0,0))
+        if self._avail_jumps > 0:
+            self._avail_jumps -= 1
+            self.get_body().apply_impulse((0,8000), (0,0))
 
     def begin_grabbing(self):
         self._try_grab = True
@@ -71,6 +75,12 @@ class Player(world.BaseEntity):
         return self._held_entity
 
     def on_collision(self, entity, contacts, normal_coef, data):
+        min_entity_v, max_entity_v = entity.get_bounding_rect()
+        min_player_v, max_player_v = self.get_bounding_rect()
+
+        if abs(max_entity_v[1] - min_player_v[1]) < 0.2:
+            self._avail_jumps = Player.MAX_JUMPS
+
         if not entity.is_dynamic():
             return
 

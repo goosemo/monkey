@@ -50,7 +50,7 @@ class WorldInstance(object):
         self._we_manager.add_entity(self._player)
         
         for entity in self._level[levels.ELEMENTS]:
-            self._we_manager.add_entity(entity)
+            self._we_manager.add_entity(entity())
 
         for factory in self._level[levels.FACTORIES]:
             factory(self._we_manager)
@@ -196,11 +196,11 @@ def main(screen):
                 image = pygame.transform.rotate(tex.image, entity.get_body().angle * 180/math.pi)
                 screen.blit(image, view.to_screen(entity.get_texture_origin()))
 
-            color = (255, 0, 0)
-            pygame.draw.circle(screen, color, view.to_screen(entity.get_body().position),3)
-            color = (255,255,255)
-            points = map(view.to_screen, entity.get_vertices())
-            pygame.draw.polygon(screen, color, points, 1)
+#            color = (255, 0, 0)
+#            pygame.draw.circle(screen, color, view.to_screen(entity.get_body().position),3)
+#            color = (0,0,128,128)
+#            points = map(view.to_screen, entity.get_vertices())
+#            pygame.draw.polygon(screen, color, points, 1)
 
         #render hud, fps, & timer
         screen.blit(hud,(hud_shift,0))
