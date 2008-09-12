@@ -72,7 +72,7 @@ class WorldInstance(object):
 
     def get_space(self):
         return self._space
-       
+
 def main(screen):
     screensize = (screen.get_width(), screen.get_height())
     

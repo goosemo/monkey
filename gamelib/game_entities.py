@@ -19,6 +19,14 @@ class Player(world.BaseEntity):
         self._try_tag = False
         self._avail_jumps = Player.MAX_JUMPS
         self._can_begin_jump = False
+        
+        min_v, max_v = self.get_bounding_rect()
+        self.height = max_v[1] - min_v[1]
+        self.width = max_v[0] - min_v[0]
+
+        self.half_height = self.height/2
+        self.half_width = self.width/2
+
         self.stop()
 
     def left(self):
@@ -38,7 +46,7 @@ class Player(world.BaseEntity):
             self._can_begin_jump = False
             self._avail_jumps -= 1
             jump_factor = 1/(Player.MAX_JUMPS - self._avail_jumps)
-            self.get_body().apply_impulse((0,4000 + 4000 * jump_factor), (0,0))
+            self.get_body().apply_impulse((0,5000 + 4000 * jump_factor), (0,0))
 
     def begin_grabbing(self):
         self._try_grab = True
@@ -81,13 +89,18 @@ class Player(world.BaseEntity):
         return self._held_entity
 
     def on_collision(self, entity, contacts, normal_coef, data):
+        contact_pos = contacts[0].position
 
-        #see if we're standing on something we can jump off of
-        min_entity_v, max_entity_v = entity.get_bounding_rect()
-        min_player_v, max_player_v = self.get_bounding_rect()
-        if abs(max_entity_v[1] - min_player_v[1]) < 0.2:
-            self._avail_jumps = Player.MAX_JUMPS
-            self._can_begin_jump = True
+        #collision checking is done in two stages to avoid a
+        #potentially costly call to get_bounding_rect
+       
+        bpos = self._body.position
+        if abs(contact_pos[1] - (bpos[1] - self.half_height)) < 0.06:
+            min_v, max_v = entity.get_bounding_rect()
+            tweak = self.half_width/2
+            if min_v[0] < bpos[0] + tweak and bpos[0] < max_v[0] + tweak:
+                self._avail_jumps = Player.MAX_JUMPS
+                self._can_begin_jump = True
 
         #handle pick-up and tagging of entities
         if self._try_grab and entity.is_grabable():

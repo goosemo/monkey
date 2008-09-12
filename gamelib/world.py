@@ -30,20 +30,15 @@ class BaseEntity(object):
 
     def get_bounding_rect(self):
         verts = self.get_vertices()
+       
+        x_s = [x for x,y in verts]
+        y_s = [y for x,y in verts]
+
+        min_x = min(x_s)
+        max_x = max(x_s)
+        min_y = min(y_s)
+        max_y = max(y_s)
         
-        min_x, min_y = verts[0]
-        max_x, max_y = verts[0]
-
-        for x,y in verts:
-            if x < min_x:
-                min_x = x
-            if x > max_x:
-                max_x =x 
-            if y < min_y:
-                min_y = y
-            if y > max_y:
-                max_y = y
-
         return ((min_x, min_y), (max_x, max_y))
 
     def get_texture_origin(self):
