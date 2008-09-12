@@ -26,7 +26,11 @@ class View(object):
         return (int(v[0] - self._position[0] + self._screensize[0]/2), int((self._screensize[1]/2)-v[1] + self._position[1]))
 
 class WorldInstance(object):
-    def __init__(self, level, player):
+    def __init__(self, player, level_num=1):
+        self._player = player
+        self._init_level(level_num)
+
+    def _init_level(self, level_num):
         self._space = pymunk.Space()
         self._space.gravity = (0.0, -9.8 * 40)
         self._space.damping = 0.98
@@ -37,9 +41,9 @@ class WorldInstance(object):
 
         self._space.set_default_collisionpair_func(self._we_manager.on_collision)
 
-        self._level = level
+        self._level_num = level_num
+        self._level = levels.Levels[level_num - 1]
 
-        self._player = player
         self._player.get_body().position = self._level[levels.PLAYER_START]
         self._we_manager.add_entity(self._player)
         
@@ -48,6 +52,12 @@ class WorldInstance(object):
 
         for factory in self._level[levels.FACTORIES]:
             factory(self._we_manager)
+
+    def next_level(self):
+        self._init_level((self._level_num + 1) % len(levels.Levels))
+
+    def previous_level(self):
+        self._init_level((self._level_num - 1) % len(levels.Levels))
 
     def get_entities(self):
         return self._we_manager.get_entities()
@@ -64,7 +74,7 @@ def main(screen):
     pymunk.init_pymunk()
 
     player = game_entities.Player()
-    world = WorldInstance(levels.Level2, player)
+    world = WorldInstance(player, level_num = 1)
     view = View(screensize)
 
     texture_manager = texture.TextureManager()
@@ -114,6 +124,13 @@ def main(screen):
                     player.begin_tagging()
                 elif event.key == K_q:
                     player.drop()
+                elif event.key == K_LEFTBRACKET:
+                    world.previous_level()  
+                elif event.key == K_RIGHTBRACKET:
+                    world.next_level()
+                else:
+                    print event.key
+
 
             elif event.type == KEYUP:
                 if event.key in keydown_map:

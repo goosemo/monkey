@@ -155,8 +155,6 @@ class EntityManager(object):
         self._space.add(joint)
         return self._register_joint(EntityManager.PINJOINT, joint, ent_a, ent_b, (pos_a, pos_b))
 
-
-
     def on_collision(self, shapeA, shapeB, contacts, normal_coef, data):
         ent_a = self._entities[shapeA]
         ent_b = self._entities[shapeB]
