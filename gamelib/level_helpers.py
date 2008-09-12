@@ -8,7 +8,8 @@ def make_chain(entity_manager, pos, num_links = 10, mass = 1, **kwargs):
     x,y = pos
     links = []
     for i in range(num_links):
-        entity = world.BaseEntity((x +i*(CHAIN_LINK_LEN+3), y), CHAIN_LINK_POLY, mass, grabable=True, taggable = False, friction=0.1, texture_name="chain")
+        grabable = (i == 0 or i == num_links - 1)
+        entity = world.BaseEntity((x +i*(CHAIN_LINK_LEN+3), y), CHAIN_LINK_POLY, mass, grabable=grabable, taggable = False, friction=0.2, texture_name="chain")
         links.append(entity)
         entity_manager.add_entity(entity)
 

@@ -137,6 +137,7 @@ class EntityManager(object):
         self._group_count = 0
         self._joint_count = 0
         self._joints = {}
+        self._collision = 0
 
     def alloc_collision_group(self):
         self._group_count += 1
