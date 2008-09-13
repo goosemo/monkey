@@ -7,14 +7,14 @@ class Banana(Deliverable):
     def __init__(self, pos, **kwargs):
         half_w, half_h = (40/2, 40/2)
         verts = [(-half_w, -half_h),(-half_w,half_h),(half_w,half_h),(half_w, -half_h)]
-        world.BaseEntity.__init__(self, pos, verts, 5, dynamic=True, texture_name="banana", **kwargs) 
+        world.BaseEntity.__init__(self, pos, verts, 2, dynamic=True, texture_name="banana", **kwargs) 
 
 class Bananas(Deliverable):
     def __init__(self, pos, **kwargs):
         half_w, half_h = (46/2, 46/2)
         verts = [(-half_w, -half_h),(-half_w,half_h),(half_w,half_h),(half_w, -half_h)]
         self._worth = 5
-        world.BaseEntity.__init__(self, pos, verts, 5, dynamic=True, texture_name="bananas", **kwargs) 
+        world.BaseEntity.__init__(self, pos, verts, 4, dynamic=True, texture_name="bananas", **kwargs) 
 
 class GoalBox(world.BaseEntity):
     def __init__(self, pos, **kwargs):
@@ -38,7 +38,7 @@ class ChainLink(world.BaseEntity):
     MAX_SEP = 5*ChainLinkLen
 
     def __init__(self, pos, previous, **kwargs):
-        world.BaseEntity.__init__(self, pos, ChainLink.POLY, 1, grabable=True, taggable = False, friction = 0.2, texture_name="chain")
+        world.BaseEntity.__init__(self, pos, ChainLink.POLY, 0.25, grabable=True, taggable = False, friction = 0.2, texture_name="chain")
         self._previous = previous
         self._joint_id = None
 
@@ -61,7 +61,7 @@ class Player(world.BaseEntity):
     LEFT = -1
     RIGHT = 1
 
-    MAX_JUMPS = 2 
+    MAX_JUMPS = 2
     
     STOPPED_TEXTURE = "monkey"
     LEFT_WALK_CYCLE = ["MONKEY_L0", "MONKEY_L1", "MONKEY_L2", "MONKEY_L3"]
@@ -72,7 +72,7 @@ class Player(world.BaseEntity):
 
     def __init__(self, power = 40000):
         world.BaseEntity.__init__(self, (400,400), [(-25,-50),(-25,50),(25,50),(25,-50)], 
-            15, friction=0.4, moment=pymunk.inf, texture_name="monkey")
+            15, friction=1.0, moment=pymunk.inf, texture_name="monkey")
 
         self._power = power
         self._direction = Player.STOP

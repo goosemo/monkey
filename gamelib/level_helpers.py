@@ -32,7 +32,7 @@ def MovableBox(pos, width=50, height=50, mass=5, **kwargs):
     half_w, half_h = (width/2, height/2)
     verts = [(-half_w, -half_h),(-half_w,half_h),(half_w,half_h),(half_w, -half_h)]
     
-    return (lambda: world.BaseEntity(pos, verts, mass, dynamic=True, texture_name="crate1", **kwargs))
+    return (lambda: world.BaseEntity(pos, verts, mass, dynamic=True, friction=1.0, texture_name="crate1", **kwargs))
 
 def Banana(pos, **kwargs):
     return (lambda: game_entities.Banana(pos, **kwargs))
@@ -42,15 +42,15 @@ def Bananas(pos, **kwargs):
 
 def FloorBox(pos, width=100, height=40, **kwargs):
     verts = [(0, -height),(0,0),(width,0),(width, -height)]
-    return (lambda: world.BaseEntity(pos, verts, pymunk.inf, dynamic=False, taggable=False, texture_name="floorBox", **kwargs))
+    return (lambda: world.BaseEntity(pos, verts, pymunk.inf, dynamic=False, friction=1.0, taggable=False, texture_name="floorBox", **kwargs))
 
 def FloorBoxRight(pos, width=40, height=40, **kwargs):
     verts = [(0, -height),(0,0),(width,0),(width, -height)]
-    return (lambda: world.BaseEntity(pos, verts, pymunk.inf, dynamic=False, taggable=False, texture_name="floorBoxRight", **kwargs))
+    return (lambda: world.BaseEntity(pos, verts, pymunk.inf, dynamic=False, taggable=False, friction=1.0, texture_name="floorBoxRight", **kwargs))
 
 def FloorBoxLeft(pos, width=40, height=40, **kwargs):
     verts = [(0, -height),(0,0),(width,0),(width, -height)]
-    return (lambda: world.BaseEntity(pos, verts, pymunk.inf, dynamic=False, taggable=False, texture_name="floorBoxLeft", **kwargs))
+    return (lambda: world.BaseEntity(pos, verts, pymunk.inf, dynamic=False, taggable=False, friction=1.0, texture_name="floorBoxLeft", **kwargs))
 
 def MastBox(pos, width=40, height=200, **kwargs):
     verts = [(0, -height),(0,0),(width,0),(width, -height)]
