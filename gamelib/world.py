@@ -171,13 +171,14 @@ class EntityManager(object):
         shape = entity.get_shape()
         shape.group = collision_group
 
-        entity.on_bind_world(self)
         self._entities[shape] = entity
 
         if entity.is_dynamic():
             self._space.add(entity.get_body(), shape)
         else:
             self._space.add_static(shape)
+
+        entity.on_bind_world(self)
 
     def remove_entity(self, entity):
         shape = entity.get_shape()

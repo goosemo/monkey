@@ -3,6 +3,7 @@ import pymunk, world
 class Deliverable(world.BaseEntity):
     _worth = 1
 
+
 class Banana(Deliverable):
     def __init__(self, pos, **kwargs):
         half_w, half_h = (40/2, 40/2)
@@ -31,6 +32,31 @@ class GoalBox(world.BaseEntity):
             self._value += entity._worth
             self.get_world_entity_manager().remove_entity(entity)
 
+ChainLinkLen = 15
+class ChainLink(world.BaseEntity):
+    LEN = ChainLinkLen 
+    POLY = [(-ChainLinkLen/2, -5.00), (-ChainLinkLen/2,5.00), (ChainLinkLen/2, 5.00), (ChainLinkLen/2, -5.00)]
+    MAX_SEP = 5*ChainLinkLen
+
+    def __init__(self, pos, previous, **kwargs):
+        world.BaseEntity.__init__(self, pos, ChainLink.POLY, 1, grabable=True, taggable = False, friction = 0.2, texture_name="chain")
+        self._previous = previous
+        self._joint_id = None
+
+    def on_bind_world(self, world_entity_manager):
+        world.BaseEntity.on_bind_world(self, world_entity_manager)
+        if self._previous:
+            self._joint_id = self.get_world_entity_manager().pin_join_entities(self, self._previous, (-ChainLink.LEN/2,0), (ChainLink.LEN/2, 0))
+
+    def tick(self, dt):
+        world.BaseEntity.tick(self, dt)
+
+        if self._previous:
+            sep = self._previous.get_body().position - self.get_body().position
+            if(sep.length > ChainLink.MAX_SEP):
+                self.get_world_entity_manager().unjoin(self._joint_id)
+                self._previous = None
+        
 class Player(world.BaseEntity):
     STOP = 0
     LEFT = -1
