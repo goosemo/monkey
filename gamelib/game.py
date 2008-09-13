@@ -66,11 +66,18 @@ class WorldInstance(object):
     def time_left(self):
         return (self._level_max_time - self._time_elapsed)
 
+    def restart_level(self):
+        self._init_level((self._level_num) % len(levels.Levels))
+
     def next_level(self):
         self._init_level((self._level_num + 1) % len(levels.Levels))
 
     def previous_level(self):
         self._init_level((self._level_num - 1) % len(levels.Levels))
+
+    def display_level_name(self, screen, font, pos):
+        level_text = font.render("%s" % self._level_name, 4, (25,25,25))
+        screen.blit(level_text, pos)
 
     def get_entities(self):
         return self._we_manager.get_entities()
@@ -119,6 +126,7 @@ def main(screen):
 
     font = pygame.font.Font(None, 16)
     timerFont = pygame.font.Font(data.filepath("pointy.ttf"), 24)
+    levelFont = pygame.font.Font(data.filepath("JANIS___.TTF"),50)
 
     clock = pygame.time.Clock()
     time = pygame.time
@@ -169,8 +177,10 @@ def main(screen):
                     player.drop()
                 elif event.key == K_LEFTBRACKET:
                     world.previous_level()
+ #                   world.display_level_name(screen, font=levelFont, pos = (70+hud_shift, 165))
                 elif event.key == K_RIGHTBRACKET:
                     world.next_level()
+ #                   world.display_level_name(screen, font=levelFont, pos = (70+hud_shift, 165))
 
 
             elif event.type == KEYUP:
@@ -186,8 +196,15 @@ def main(screen):
                 pygame.time.set_timer(USEREVENT, 1000)
                 time_left = world.time_left()
 
+                #for time being
+                failed = 0
+
                 if time_left == 0:
-                    world.next_level()        
+                    if not failed:
+                        world.next_level()
+                    else:
+                        world.restart_level()    
+#                    world.display_level_name(screen, font=levelFont, pos = (70+hud_shift, 165))
 
                 #render timer
                 if time_left > 50:
@@ -232,10 +249,9 @@ def main(screen):
         screen.blit(text_surf, (5, 5))
         screen.blit(text_timer, (370 + hud_shift, 65))
 
-        pygame.display.flip()
+        if world._time_elapsed < 5:
+            world.display_level_name(screen, font=levelFont, pos = (70+hud_shift, 165))        
 
-    def display_level_name(self, screen):
-        level_font = timerFont.render("%s" % world._level_name, 4, (25,25,25))
-        screen.blit(level_font, (370 + hud_shift, 65))
-        pygame.time.wait(1000)
+
+        pygame.display.flip()
 
