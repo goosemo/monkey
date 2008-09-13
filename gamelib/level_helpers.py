@@ -1,11 +1,11 @@
 import game_entities, pymunk, world
 
-def make_chain(entity_manager, pos, num_links = 10, mass = 1, friction = 0.2, **kwargs):
+def make_chain(entity_manager, pos, num_links = 10, mass = 0.25, friction = 0.2, **kwargs):
     x,y = pos
     previous = None
     for i in range(num_links):
         link_pos = (x +i*(game_entities.ChainLink.LEN+3), y)
-        link = game_entities.ChainLink(link_pos, previous, friction=friction, **kwargs)
+        link = game_entities.ChainLink(link_pos, previous, friction=friction, mass=mass, **kwargs)
         if previous:
             previous.register_next(link)
 
@@ -37,11 +37,11 @@ def MovableBox(pos, width=50, height=50, mass=5, friction=1.0, **kwargs):
     
     return (lambda: world.BaseEntity(pos, verts, mass, dynamic=True, friction=friction, texture_name="crate1", **kwargs))
 
-def Banana(pos, mass=2, **kwargs):
+def Banana(pos, mass=1, **kwargs):
     return (lambda: game_entities.Banana(pos, mass=mass, **kwargs))
 
-def Bananas(pos, **kwargs):
-    return (lambda: game_entities.Bananas(pos, **kwargs))
+def Bananas(pos, mass=1.5, **kwargs):
+    return (lambda: game_entities.Bananas(pos, mass=mass, **kwargs))
 
 def FloorBox(pos, width=100, height=40, **kwargs):
     verts = [(0, -height),(0,0),(width,0),(width, -height)]
@@ -75,8 +75,8 @@ def Hook(pos, **kwargs):
 ##
 # Factories
 
-def ChainFactory(pos, num_links = 10, **kwargs):
-    return lambda entity_manager, pos=pos, num_links = num_links, **kwargs: make_chain(entity_manager, pos, num_links = num_links, **kwargs)
+def ChainFactory(pos, num_links = 10, mass = 0.25, **kwargs):
+    return lambda entity_manager, pos=pos, num_links = num_links, **kwargs: make_chain(entity_manager, pos, mass=mass, num_links = num_links, **kwargs)
 
 def MastFactory(pos, height, **kwargs):
     return lambda entity_manager, pos=pos, height=height, **kwargs: make_mast(entity_manager, pos, height, **kwargs)

@@ -11,11 +11,11 @@ class Banana(Deliverable):
         world.BaseEntity.__init__(self, pos, verts, mass=mass, dynamic=True, texture_name="banana", **kwargs) 
 
 class Bananas(Deliverable):
-    def __init__(self, pos, **kwargs):
+    def __init__(self, pos, mass=1.5, **kwargs):
         half_w, half_h = (46/2, 46/2)
         verts = [(-half_w, -half_h),(-half_w,half_h),(half_w,half_h),(half_w, -half_h)]
         self._worth = 5
-        world.BaseEntity.__init__(self, pos, verts, 1.5, dynamic=True, texture_name="bananas", **kwargs) 
+        world.BaseEntity.__init__(self, pos, verts, mass=mass, dynamic=True, texture_name="bananas", **kwargs) 
 
 class GoalBox(world.BaseEntity):
     def __init__(self, pos, **kwargs):
