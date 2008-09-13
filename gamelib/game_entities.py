@@ -168,9 +168,9 @@ class Player(world.BaseEntity):
             self.end_untagging()
             entity.release_tags()
 
-        self._can_begin_jump = True                 #REMOVE
-        self._avail_jumps = Player.MAX_JUMPS        #REMOVE
-        return                                      #REMOVE
+#        self._can_begin_jump = True                 #REMOVE
+#        self._avail_jumps = Player.MAX_JUMPS        #REMOVE
+#        return                                      #REMOVE
 
         contact_pos = contacts[0].position
 
