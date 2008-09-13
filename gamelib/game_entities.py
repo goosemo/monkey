@@ -105,7 +105,7 @@ class Player(world.BaseEntity):
             self._can_begin_jump = False
             self._avail_jumps -= 1
             jump_factor = 1/(Player.MAX_JUMPS - self._avail_jumps)
-            self.get_body().apply_impulse((0,5000 + 4000 * jump_factor), (0,0))
+            self.get_body().apply_impulse((0,3000 + 2000 * jump_factor), (0,0))
 
 
     def begin_untagging(self):
