@@ -3,14 +3,15 @@ Monkey in a Tangle (Working title)
 
 Entry in PyWeek #7  <http://www.pyweek.org/7/>
 Team: Ohio State U. Game Creation Club
-Members: morgan.goose AlfredR Jane
+Members: morgan.goose AlfredR Jane jsharpna
 
 DEPENDENCIES:
 
 You might need to install some of these before running the game:
 
-  Python:     http://www.python.org/
-  PyGame:     http://www.pygame.org/
+  Python:     http://python.org/
+  PyGame:     http://pygame.org/
+  PyMunk:     http://code.google.com/p/pymunk/
 
 RUNNING THE GAME:
 
@@ -23,10 +24,13 @@ Othewise open a terminal / console and "cd" to the game directory and run:
 HOW TO PLAY THE GAME:
 
 
-  A, D   Move left and right
-  S, Q   Picks up, drops an item
-  E      Attaches held item to another object that you're contact with
-  Space  Jumps
+  left      Move left
+  right     Move right
+  z         Picks up
+  x         Drops an item
+  c         Attaches held item to chain
+  v         Detaches item from chain
+  Space/Up  Jump
 
 LICENSE:
 

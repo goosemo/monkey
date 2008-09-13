@@ -129,7 +129,7 @@ Level2 = {
     ],
 
     FACTORIES: [
-        ChainFactory((0,1050), length=20), #length in links
+        ChainFactory((20,1050), length=20), #length in links
 
         # Floor areas
         #                  x    y
@@ -180,10 +180,9 @@ Level3 = {
 
         # Floor areas
         #                  x    y
-        FloorBoxFactory((-50, 850), width=450),
-        FloorBoxFactory((250, 650), width=350),
-        FloorBoxFactory((450, 450), width=350),
-        FloorBoxFactory((650, 250), width=650),
+        FloorBoxFactory((  0, 800), width=450),
+        FloorBoxFactory((400, 650), width=350),
+        FloorBoxFactory((  0, 250), width=650),
 
         # Uprights
 
@@ -200,7 +199,7 @@ Level3 = {
 }
 
 Level4 = {
-    LEVEL_NAME: "\nKing of the Forest\n",
+    LEVEL_NAME: "King of the Forest",
     PLAYER_START: (50, -200),
     MAXTIME: 1000,
 
