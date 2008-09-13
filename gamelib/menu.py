@@ -1,6 +1,6 @@
 #! /usr/bin/env python
 
-import pygame, sys, data
+import pygame, sys, data, game_entities
 from pygame.locals import *
 
 import game, util
@@ -44,6 +44,7 @@ class Menu(object):
             'Drop Chain - X',
             'Tag Banana - C',
             'Un-Tag Banana - V',
+            'Restart Level - R',
         ]
         x_pos = 30
         y_pos = 130
@@ -60,6 +61,20 @@ class Menu(object):
             y_pos += 30
 
        
+    def walking_monkey(self, screen, i=0):
+        
+        player = game_entities.Player()
+        player.tick(1)
+        player.get_body().position = (50,50)
+
+        if i < 50:
+            player.left()
+        elif i < 100:
+            player.right()
+        elif i < 110:
+            player.stop()
+            i = 0
+        i += i
 
 
     def main_loop(self):
@@ -86,7 +101,7 @@ class Menu(object):
               
             text_surf = title_font.render("%s" % title, 1, (255,255,255))
             self.screen.blit(text_surf, (30, 30))
-
+            self.walking_monkey(self.screen)
             self.print_directions(self.screen, directions_font)
             pygame.display.flip()
         

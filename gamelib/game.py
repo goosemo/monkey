@@ -209,6 +209,8 @@ def main(screen):
                     player.drop()
                 elif event.key == K_v:
                     player.begin_untagging()
+                elif event.key == K_r:
+                    world.restart_level()
                 elif event.key == K_LEFTBRACKET:
                     world.previous_level()
  #                   world.display_level_name(screen, font=levelFont, pos = (70+hud_shift, 165))

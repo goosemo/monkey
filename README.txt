@@ -31,6 +31,7 @@ HOW TO PLAY THE GAME:
   c         Attaches held item to chain
   v         Detaches item from chain
   Space/Up  Jump
+  r         Restarts level
 
 LICENSE:
 
