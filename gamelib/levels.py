@@ -155,45 +155,37 @@ Level2 = {
 
 Level3 = {
     LEVEL_NAME: "Semi Golden Ratios",
-    PLAYER_START: (30,1025),
+    PLAYER_START: (100,1025),
     MAXTIME: 200,
 
-    GOALBOX_LOCATION: (-100, 1000),
+    GOALBOX_LOCATION: (100, 100),
     GOAL_VALUE: 12,
 
     ELEMENTS: [
 
-        # Items in order on map
+        # Items on map
         Banana((175,890)),
-
         Bananas((375,690)),
-
-        #needs to be a goal box
-        MovableBox((575,490), width=40, height=40, mass = 10),
-
+        Bananas((575,490)),
         Bananas((775,290)),
 
     ],
 
     FACTORIES: [
-        ChainFactory((0,50), length=20), #length in links
+        ChainFactory((150,950), length=20), #length in links
 
         # Floor areas
         #                  x    y
-        FloorBoxFactory((  0, 800), width=450),
-        FloorBoxFactory((400, 650), width=350),
-        FloorBoxFactory((  0, 250), width=650),
+        FloorBoxFactory((  0, 750), width=675),
+        FloorBoxFactory((300, 250), width=375),
+        FloorBoxFactory((  0,  70), width=1200),
 
         # Uprights
 
-        # Two main masts that hold level together
-        MastFactory(( 100, 1000), height=1200),
-        MastFactory((1200, 1000), height=1200),
-        
-        # Masts inside main two
-        MastFactory((300,900), height=300),
-        MastFactory((500,700), height=300),
-        MastFactory((700,500), height=300),
+        MastFactory(( 400,  400), height= 200),
+        MastFactory(( 600,  770), height= 590),
+        MastFactory((  50,  900), height= 900),
+        MastFactory((1170, 1600), height=1600),
 
     ]
 }
