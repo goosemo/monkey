@@ -77,6 +77,11 @@ def MastTop(pos, width=40, height=41, **kwargs):
     verts = [(0, -height),(0,0),(width,0),(width, -height)]
     return (lambda: world.BaseEntity(pos, verts, pymunk.inf, dynamic=False, texture_name="topPole", **kwargs))
 
+def Hook(pos, **kwargs):
+    verts = [(0, -10),(0,0),(15,0),(15, -10)]
+    return (lambda: world.BaseEntity(pos, verts, pymunk.inf, dynamic=False, taggable=True, texture_name="chain", **kwargs))
+
+
 ##
 # Factories
 

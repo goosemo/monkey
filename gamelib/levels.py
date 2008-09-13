@@ -153,29 +153,33 @@ Level3 = {
 }
 
 Level4 = {
-    LEVEL_NAME: "Monkey with a Goal",
+    LEVEL_NAME: "Hand Banana",
     PLAYER_START: (60, 100),
     MAXTIME: 150,
     
     ELEMENTS: [
-        FloorBox((40,20), width=60),
-        FloorBox((0,-800), width=1000,height=40),
-        MovableBox((80,-760), width=80, height=80, mass=10),
-        MovableBox((80,-680), width=80, height=80, mass=10),
-        MovableBox((160,-760), width=80, height=80, mass=10)
-#        FloorBox((600,-610), width=40,height=40),
-#        FloorBox((800,-800), width=200,height=10),
-#        FloorBox((1000,-760), width=200,height=50),
-#        FloorBox((1200,-720), width=200,height=90),
-#        FloorBox((500,-1000), width=300,height=40),
-#        MovableBox((600,-800), width=10, height=10, mass=1000)
+#        MovableBox((80,-760), width=80, height=80, mass=10),
+#        MovableBox((80,-680), width=80, height=80, mass=10),
+#        MovableBox((160,-760), width=80, height=80, mass=10)
+        Hook((1195,-795))
     ],
     
     FACTORIES: [
-        ChainFactory((700,-700), length=40), #length in links
+#        ChainFactory((700,-700), length=40), #length in links
+        FloorBoxFactory((590,-1000), width = 450),
+        FloorBoxFactory((0,20), width=100),
+        FloorBoxFactory((0,-800), width=1200,height=40),
+        FloorBoxFactory((1300,-980), width=200,height=40),
+        FloorBoxFactory((680,-1300), width=200,height=40),
+        FloorBoxFactory((500,-1500), width=500,height=40),
+
 	MastFactory((0,1000), height = 1800),
-	MastFactory((960,-500), height = 300),
-	MastFactory((500,-700), height = 100)
+	MastFactory((960,-400), height = 400),
+	MastFactory((500,-700), height = 900),
+	MastFactory((1400,1000), height = 2000),
+	MastFactory((800,-950), height = 120),
+	MastFactory((800,-1190), height = 800),
+	MastFactory((950,-950), height = 650)
     ]
 
 }

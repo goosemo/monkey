@@ -136,7 +136,7 @@ def main(screen):
 
 
     unused_time = 0
-    step_size = 0.001
+    step_size = 0.005
 
     keydown_map = {K_w: False, K_d: False, K_a: False, K_LEFT: False, K_RIGHT: False}
 
