@@ -87,9 +87,15 @@ def main(screen):
     texture_manager.register_texture('chain', 'Chain01.png')
     texture_manager.register_texture('balloon', 'Balloon.png')
     texture_manager.register_texture('crate1', 'Crate001.png')
+
     texture_manager.register_texture('floorBox', 'FloorBox1.png')
+    texture_manager.register_texture('floorBoxRight', 'FloorBoxRight.png')
+    texture_manager.register_texture('floorBoxLeft', 'FloorBoxLeft.png')
+
     texture_manager.register_texture('banana', 'Banana.png')
     texture_manager.register_texture('bananas', 'BananaS.png')
+    texture_manager.register_texture('topPole', 'PoleToppers.png')
+    texture_manager.register_texture('bottomPole', 'PoleBottoms.png')
 
     pymunk.init_pymunk()
 
@@ -170,8 +176,10 @@ def main(screen):
                     time_elapsed = 0
                     world.next_level()        
                 #render timer
-                if (time_left > 10):
+                if time_left > 50:
                     color = (255,255,255)
+                elif time_left > 10:
+                    color = (155,0,0)
                 else:
                     color = (255,0,0)
         

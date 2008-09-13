@@ -14,42 +14,21 @@ Level1 = {
     
     ELEMENTS: [
 
-        # Two main masts that hold level together
-        MastBox((-250, 900), height=1000),
-        MastBox((250, 900), height=1000),
-
-        # The base/floor of the level
-        FloorBox((-250,0), width=500),
-
         # These are the leaves that come out into the level
 
         #   left side
         #           x    y
-        FloorBox((-280, 800), width=250),
-        FloorBox((-280, 500), width=250),
-        FloorBox((-280, 200), width=250),
+#        FloorBox((-280, 800), width=250),
+#        FloorBox((-280, 500), width=250),
+#        FloorBox((-280, 200), width=250),
 
 
         #   right side
         #          x    y
-        FloorBox(( 80, 650), width=250),
-        FloorBox(( 80, 350), width=250),
-
-
-        # Now for the uprights to make one use their chains
+ #       FloorBox(( 80, 650), width=250),
+ #       FloorBox(( 80, 350), width=250),
         
-        #   left side
-        #          x    y
-        MastBox((-130, 600), height=100),
-        MastBox((-130, 300), height=100),
-
-        #   right side
-        #         x    y
-        MastBox((140, 750), height=100),
-        MastBox((140, 450), height=100),
-
-        
-        # This is where the good to collect are placed
+        # This is where the goods to collect are placed
         
         #   left side
         Banana((-150,550)),
@@ -63,7 +42,40 @@ Level1 = {
 
     ],
 
-    FACTORIES: [],
+    FACTORIES: [
+
+        # Floor areas
+
+        #   Bottom most floor
+        FloorBoxFactory((-310,0), width=700),
+
+        #   left side
+        FloorBoxFactory((-280,800), width=250),
+        FloorBoxFactory((-280, 500), width=250),
+        FloorBoxFactory((-280, 200), width=250),
+
+
+        #   right side
+        #          x    y
+        FloorBoxFactory(( 80, 650), width=250),
+        FloorBoxFactory(( 80, 350), width=250),
+
+    
+        # Uprights
+
+        # Two main masts that hold level together
+        MastFactory((-250,900), height=1200),
+        MastFactory(( 250,900), height=1200),
+
+        #   left side               
+        MastFactory((-130,600), height=200),
+        MastFactory((-130,300), height=200),
+
+        #   right side
+        MastFactory((140,750), height=200),
+        MastFactory((140,450), height=200),
+    
+    ],
 }
 
 Level3 = {

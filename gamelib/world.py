@@ -25,10 +25,16 @@ class BaseEntity(object):
         self._is_dynamic = dynamic
         self._time_passed = 0.0
 
+        if not self._is_dynamic:
+            self._bounding_rect_cache = self.get_bounding_rect(force=True)
+
     def get_texture_name(self):
         return self._texture_name
 
-    def get_bounding_rect(self):
+    def get_bounding_rect(self, force=False):
+        if not force and not self._is_dynamic:
+            return self._bounding_rect_cache
+
         verts = self.get_vertices()
        
         x_s = [x for x,y in verts]

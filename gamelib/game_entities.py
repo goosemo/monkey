@@ -89,6 +89,19 @@ class Player(world.BaseEntity):
         return self._held_entity
 
     def on_collision(self, entity, contacts, normal_coef, data):
+        #handle pick-up and tagging of entities
+        if self._try_grab and entity.is_grabable():
+            self.end_grabbing()
+            self.hold(entity, contacts[0].position)
+
+        elif self._try_tag and entity.is_taggable() and self.get_held_entity() != entity:
+            self.end_tagging()
+            self.tag(entity, contacts[0].position)
+
+        self._can_begin_jump = True                 #REMOVE
+        self._avail_jumps = Player.MAX_JUMPS        #REMOVE
+        return                                      #REMOVE
+
         contact_pos = contacts[0].position
 
         #collision checking is done in two stages to avoid a
@@ -102,14 +115,6 @@ class Player(world.BaseEntity):
                 self._avail_jumps = Player.MAX_JUMPS
                 self._can_begin_jump = True
 
-        #handle pick-up and tagging of entities
-        if self._try_grab and entity.is_grabable():
-            self.end_grabbing()
-            self.hold(entity, contacts[0].position)
-
-        elif self._try_tag and entity.is_taggable() and self.get_held_entity() != entity:
-            self.end_tagging()
-            self.tag(entity, contacts[0].position)
 
     def tick(self, dt):
         #disable the ability to jump each tick
