@@ -28,6 +28,8 @@ class BaseEntity(object):
         if not self._is_dynamic:
             self._bounding_rect_cache = self.get_bounding_rect(force=True)
 
+        self._tags = []
+
     def get_texture_name(self):
         return self._texture_name
 
@@ -78,6 +80,15 @@ class BaseEntity(object):
 
         return False
 
+    def on_tag(self, entity, joint_id):
+        self._tags.append((entity, joint_id))
+
+    def release_tags(self):
+        for entity, joint_id in self._tags:
+            self.get_world_entity_manager().unjoin(joint_id)
+
+        self._tags = []
+
     def tag(self, grabable_ent, wc_taggable_pos):
         if not self.is_taggable() or not grabable_ent.is_grabable():
             return
@@ -95,9 +106,11 @@ class BaseEntity(object):
         cgrp = self.get_world_entity_manager().alloc_collision_group()
         self.get_shape().group = cgrp
         grabable_ent.get_shape().group = cgrp
-        
+       
         #pin it to the taggable
-        grabable_ent.pin_join(self, lc_grabable_pos, lc_taggable_pos)
+        joint_id = grabable_ent.pin_join(self, lc_grabable_pos, lc_taggable_pos)
+
+        self.on_tag(grabable_ent, joint_id)
 
 
     def unjoin(self, joint_id):

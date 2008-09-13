@@ -74,6 +74,8 @@ class Player(world.BaseEntity):
         self._held_entity = None
         self._try_grab = False
         self._try_tag = False
+        self._try_untag = False
+
         self._avail_jumps = Player.MAX_JUMPS
         self._can_begin_jump = False
         
@@ -104,6 +106,13 @@ class Player(world.BaseEntity):
             self._avail_jumps -= 1
             jump_factor = 1/(Player.MAX_JUMPS - self._avail_jumps)
             self.get_body().apply_impulse((0,5000 + 4000 * jump_factor), (0,0))
+
+
+    def begin_untagging(self):
+        self._try_untag = True
+
+    def end_untagging(self):
+        self._try_untag = False
 
     def begin_grabbing(self):
         self._try_grab = True
@@ -154,6 +163,10 @@ class Player(world.BaseEntity):
         elif self._try_tag and entity.is_taggable() and self.get_held_entity() != entity:
             self.end_tagging()
             self.tag(entity, contacts[0].position)
+
+        elif self._try_untag and entity.is_taggable() and self.get_held_entity() != entity:
+            self.end_untagging()
+            entity.release_tags()
 
         self._can_begin_jump = True                 #REMOVE
         self._avail_jumps = Player.MAX_JUMPS        #REMOVE

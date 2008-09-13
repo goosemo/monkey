@@ -142,7 +142,7 @@ def main(screen):
     unused_time = 0
     step_size = 0.005
 
-    keydown_map = {K_w: False, K_d: False, K_a: False, K_LEFT: False, K_RIGHT: False}
+    keydown_map = {K_w: False, K_LEFT: False, K_RIGHT: False}
 
     #preprime event timers
     pygame.time.set_timer(USEREVENT, 1000)
@@ -172,12 +172,14 @@ def main(screen):
                     is_running = False
                 elif event.key == K_SPACE or event.key == K_UP:
                     player.jump()
-                elif event.key == K_s:
+                elif event.key == K_z:
                     player.begin_grabbing()
-                elif event.key == K_e:
+                elif event.key == K_c:
                     player.begin_tagging()
-                elif event.key == K_q:
+                elif event.key == K_x:
                     player.drop()
+                elif event.key == K_v:
+                    player.begin_untagging()
                 elif event.key == K_LEFTBRACKET:
                     world.previous_level()
  #                   world.display_level_name(screen, font=levelFont, pos = (70+hud_shift, 165))
@@ -189,10 +191,12 @@ def main(screen):
             elif event.type == KEYUP:
                 if event.key in keydown_map:
                     keydown_map[event.key] = False
-                elif event.key == K_s:
+                elif event.key == K_z:
                     player.end_grabbing()
-                elif event.key == K_e:
+                elif event.key == K_c:
                     player.end_tagging()
+                elif event.key == K_v:
+                    player.end_untagging()
 
             elif event.type == USEREVENT:
                 world._time_elapsed += 1
@@ -215,9 +219,9 @@ def main(screen):
 
 
         #perframe actions
-        if keydown_map[K_a] or keydown_map[K_LEFT]:
+        if keydown_map[K_LEFT]:
             player.left()
-        elif keydown_map[K_d] or keydown_map[K_RIGHT]:
+        elif keydown_map[K_RIGHT]:
             player.right()
         else:
             player.stop()
