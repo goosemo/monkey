@@ -184,10 +184,10 @@ Level4 = {
     ],
     
     FACTORIES: [
-#        ChainFactory((700,-700), num_links=10), 
-#        ChainFactory((620,-1480), num_links=6), 
-#        ChainFactory((800,-900), num_links=15), 
-#        ChainFactory((1000,-700), num_links=10), 
+        ChainFactory((700,-700), num_links=10), 
+        ChainFactory((620,-1480), num_links=6), 
+        ChainFactory((800,-900), num_links=15), 
+        ChainFactory((1000,-700), num_links=10), 
         FloorBoxFactory((600,-1000), width = 490),
         FloorBoxFactory((0,-300), width=100),
         FloorBoxFactory((0,-800), width=1200,height=40),
