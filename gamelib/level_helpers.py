@@ -55,7 +55,7 @@ def Bananas(pos, width=46, height=46, mass=5, **kwargs):
 
 def FloorBox(pos, width=100, height=40, **kwargs):
     verts = [(0, -height),(0,0),(width,0),(width, -height)]
-    return (lambda: world.BaseEntity(pos, verts, pymunk.inf, dynamic=False, texture_name="floorBox", **kwargs))
+    return (lambda: world.BaseEntity(pos, verts, pymunk.inf, dynamic=False, taggable=False, texture_name="floorBox", **kwargs))
 
 def FloorBoxRight(pos, width=40, height=40, **kwargs):
     verts = [(0, -height),(0,0),(width,0),(width, -height)]
