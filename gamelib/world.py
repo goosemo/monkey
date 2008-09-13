@@ -179,12 +179,21 @@ class EntityManager(object):
         else:
             self._space.add_static(shape)
 
+    def remove_entity(self, entity):
+        shape = entity.get_shape()
+        if shape in self._entities:
+            del self._entities[shape]
+            self._space.remove(entity.get_body())
+
     def pin_join_entities(self, ent_a, ent_b, pos_a, pos_b):
         joint = pymunk.PinJoint(ent_a.get_body(), ent_b.get_body(), pos_a, pos_b)
         self._space.add(joint)
         return self._register_joint(EntityManager.PINJOINT, joint, ent_a, ent_b, (pos_a, pos_b))
 
     def on_collision(self, shapeA, shapeB, contacts, normal_coef, data):
+        if not shapeA in self._entities or not shapeB in self._entities:
+            return False
+
         ent_a = self._entities[shapeA]
         ent_b = self._entities[shapeB]
 

@@ -1,5 +1,4 @@
-import world
-from game_entities import *
+import game_entities, pymunk, world
 
 CHAIN_LINK_LEN = 15
 CHAIN_LINK_POLY = [(-CHAIN_LINK_LEN/2, -5.00), (-CHAIN_LINK_LEN/2,5.00), (CHAIN_LINK_LEN/2, 5.00), (CHAIN_LINK_LEN/2, -5.00)]
@@ -34,24 +33,17 @@ def make_floor_box(entity_manager, pos, width):
     entity_manager.add_entity(FloorBox((x+40,y),width=width-80)())
     entity_manager.add_entity(FloorBoxRight((x+(width-40),y))())
 
-
 def MovableBox(pos, width=50, height=50, mass=5, **kwargs):
     half_w, half_h = (width/2, height/2)
     verts = [(-half_w, -half_h),(-half_w,half_h),(half_w,half_h),(half_w, -half_h)]
     
     return (lambda: world.BaseEntity(pos, verts, mass, dynamic=True, texture_name="crate1", **kwargs))
 
-def Banana(pos, width=40, height=40, mass=5, **kwargs):
-    half_w, half_h = (width/2, height/2)
-    verts = [(-half_w, -half_h),(-half_w,half_h),(half_w,half_h),(half_w, -half_h)]
-    
-    return (lambda: world.BaseEntity(pos, verts, mass, dynamic=True, texture_name="banana", **kwargs))
+def Banana(pos, **kwargs):
+    return (lambda: game_entities.Banana(pos, **kwargs))
 
-def Bananas(pos, width=46, height=46, mass=5, **kwargs):
-    half_w, half_h = (width/2, height/2)
-    verts = [(-half_w, -half_h),(-half_w,half_h),(half_w,half_h),(half_w, -half_h)]
-    
-    return (lambda: world.BaseEntity(pos, verts, mass, dynamic=True, texture_name="bananas", **kwargs))
+def Bananas(pos, **kwargs):
+    return (lambda: game_entities.Bananas(pos, **kwargs))
 
 def FloorBox(pos, width=100, height=40, **kwargs):
     verts = [(0, -height),(0,0),(width,0),(width, -height)]

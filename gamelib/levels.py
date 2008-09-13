@@ -7,13 +7,19 @@ PLAYER_START = 1
 MAXTIME = 2
 ELEMENTS = 3
 FACTORIES = 4
+GOALBOX_LOCATION = 5
+GOAL_VALUE = 6 
 
 Level1 = {
     LEVEL_NAME: "Monkey on a Boat",
     PLAYER_START: (-150, 1000),
     MAXTIME: 250,
-    
+
+    GOALBOX_LOCATION: (-150, 1200),
+    GOAL_VALUE: 12,
+
     ELEMENTS: [
+        Banana((-150, 1500)),
 
         # This is where the goods to collect are placed
         
@@ -70,6 +76,10 @@ Level2 = {
     PLAYER_START: (30,1025),
     MAXTIME: 150,
 
+    GOALBOX_LOCATION: (-100, 1000),
+    GOAL_VALUE: 12,
+
+
     ELEMENTS: [
 
         # Items in order on map
@@ -114,6 +124,9 @@ Level3 = {
     PLAYER_START: (30,1025),
     MAXTIME: 200,
 
+    GOALBOX_LOCATION: (-100, 1000),
+    GOAL_VALUE: 12,
+
     ELEMENTS: [
 
         # Items in order on map
@@ -156,7 +169,7 @@ Level4 = {
     LEVEL_NAME: "Hand Banana",
     PLAYER_START: (60, 100),
     MAXTIME: 150,
-    
+
     ELEMENTS: [
 #        MovableBox((80,-760), width=80, height=80, mass=10),
 #        MovableBox((80,-680), width=80, height=80, mass=10),

@@ -47,13 +47,15 @@ class WorldInstance(object):
         self._level = levels.Levels[level_num - 1]
 
         self._player.get_body().position = self._level[levels.PLAYER_START]
-        self._level_name = self._level[levels.LEVEL_NAME]
+        self._we_manager.add_entity(self._player)
 
+        self._level_name = self._level[levels.LEVEL_NAME]
         self._level_max_time = self._level[levels.MAXTIME]
         self._time_elapsed = 0
 
-        self._we_manager.add_entity(self._player)
-        
+        self._goalbox = game_entities.GoalBox(self._level[levels.GOALBOX_LOCATION])
+        self._we_manager.add_entity(self._goalbox)
+                
         for entity in self._level[levels.ELEMENTS]:
             self._we_manager.add_entity(entity())
 
@@ -84,6 +86,8 @@ class WorldInstance(object):
 
     def tick(self, dt):
         self._we_manager.tick(dt)
+        if self._goalbox.get_value() >= self._level[levels.GOAL_VALUE]:
+            self.next_level()
 
     def get_max_time(self):
         return self._max_time
@@ -108,6 +112,7 @@ def main(screen):
     texture_manager.register_texture('chain', 'Chain01.png')
     texture_manager.register_texture('balloon', 'Balloon.png')
     texture_manager.register_texture('crate1', 'Crate001.png')
+    texture_manager.register_texture('bananacrate', 'BananaCrate.png')
 
     texture_manager.register_texture('floorBox', 'FloorBox1.png')
     texture_manager.register_texture('floorBoxRight', 'FloorBoxRight.png')
