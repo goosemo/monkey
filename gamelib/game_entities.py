@@ -5,10 +5,10 @@ class Deliverable(world.BaseEntity):
     _worth = 1
 
 class Banana(Deliverable):
-    def __init__(self, pos, **kwargs):
+    def __init__(self, pos, mass=2, **kwargs):
         half_w, half_h = (40/2, 40/2)
-        verts = [(-half_w, -half_h),(-half_w, half_h),(half_w,half_h),(half_w, -half_h)]
-        world.BaseEntity.__init__(self, pos, verts, 1, dynamic=True, texture_name="banana", **kwargs) 
+        verts = [(-half_w, -half_h),(-half_w,half_h),(half_w,half_h),(half_w, -half_h)]
+        world.BaseEntity.__init__(self, pos, verts, mass=mass, dynamic=True, texture_name="banana", **kwargs) 
 
 class Bananas(Deliverable):
     def __init__(self, pos, **kwargs):
@@ -40,9 +40,9 @@ class ChainLink(world.BaseEntity):
 
     TICKS_TO_UNTANGLE = 200 
 
-    def __init__(self, pos, previous, **kwargs):
-        world.BaseEntity.__init__(self, pos, ChainLink.POLY, 1, grabable=True, 
-        taggable = False, friction = 0.2, texture_name="chain", layers = 1)
+    def __init__(self, pos, previous, friction=0.2, mass=0.25, **kwargs):
+        world.BaseEntity.__init__(self, pos, ChainLink.POLY, mass=mass, grabable=True, taggable = False, friction = friction, texture_name="chain", layers=1)
+
         self._previous = previous
         self._next = None
         self._joint_id = None
@@ -52,6 +52,9 @@ class ChainLink(world.BaseEntity):
         world.BaseEntity.on_bind_world(self, world_entity_manager)
         if self._previous:
             self._joint_id = self.get_world_entity_manager().pin_join_entities(self, self._previous, (-ChainLink.LEN/2,0), (ChainLink.LEN/2, 0))
+
+    def is_single(self):
+        return self._next is None and self._previous is None
 
     def chain_untangle(self, grpid):
         self.get_shape().group = grpid

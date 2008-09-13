@@ -24,9 +24,9 @@ Level0 = {
         # Items in order on map
         Banana((200,150)),
         Banana((240,150)),
-        MovableBox((300,180), width=80, height=80, mass=5),
-        MovableBox((380,180), width=80, height=80, mass=5),
-        MovableBox((340,260), width=80, height=80, mass=5),
+        MovableBox((300,180), width=40, height=40, mass=5),
+        MovableBox((380,180), width=40, height=40, mass=5),
+        MovableBox((340,260), width=40, height=40, mass=5),
   
     ],
 
@@ -191,7 +191,36 @@ Level3 = {
 }
 
 Level4 = {
-    LEVEL_NAME: "King of the Forest",
+    LEVEL_NAME: "Banana Bridge",
+    PLAYER_START: (140,80),
+    MAXTIME: 150,
+
+    GOALBOX_LOCATION: (1400, -20),
+    GOAL_VALUE: 12,
+
+
+    ELEMENTS: [
+
+        Banana((0,35),mass=10),
+        Hook((800,0)),
+        MovableBox((500,40), width=320, height=40, mass = 5, friction=3.0),
+        # Items in order on map
+   
+    ],
+
+    FACTORIES: [
+        FloorBoxFactory((-100, 0), width=900),
+        FloorBoxFactory((760, -40), width=150),
+        FloorBoxFactory((1200, -100), width=300),
+        ChainFactory((250,10), mass=5, num_links=1, friction=15.0), 
+        ChainFactory((245,10), mass=5,  num_links=1, friction=15.0), 
+        ChainFactory((240,10), mass=5, num_links=1, friction=15.0)
+    ]
+}
+
+
+Level5 = {
+    LEVEL_NAME: "\nKing of the Jungle\n",
     PLAYER_START: (50, -200),
     MAXTIME: 1000,
 
@@ -240,5 +269,5 @@ Level4 = {
 
 }
 
-Levels = [Level0,Level1,Level2,Level3,Level4]
+Levels = [Level0,Level1,Level2,Level3,Level4,Level5]
 

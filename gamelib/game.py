@@ -91,14 +91,16 @@ class WorldInstance(object):
 
         
         #hack to get chain interaction to work w/o collision
+ 
         if self._player.is_grabbing():
             min_v, max_v = self._player.get_bounding_rect()
             for entity in self.get_entities():
                 if isinstance(entity, game_entities.ChainLink):
                     pos = entity.get_body().position
-                    if min_v[0] <= pos[0] and pos[0] <= max_v[0]:
-                        if min_v[1] <= pos[1] and pos[1] <= max_v[1]:
+                    if min_v[0] - 7<= pos[0] and pos[0] <= max_v[0] + 7:
+                        if min_v[1] - 7<= pos[1] and pos[1] <= max_v[1] + 7:
                             end = entity.get_free_end()
+                            if entity.is_single(): end = entity
                             if end:
                                self._player.hold(end, self._player.get_body().position)
                                head = entity.get_head()

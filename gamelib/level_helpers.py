@@ -1,11 +1,11 @@
 import game_entities, pymunk, world
 
-def make_chain(entity_manager, pos, num_links = 10, mass = 1, **kwargs):
+def make_chain(entity_manager, pos, num_links = 10, mass = 1, friction = 0.2, **kwargs):
     x,y = pos
     previous = None
     for i in range(num_links):
         link_pos = (x +i*(game_entities.ChainLink.LEN+3), y)
-        link = game_entities.ChainLink(link_pos, previous)
+        link = game_entities.ChainLink(link_pos, previous, friction=friction, **kwargs)
         if previous:
             previous.register_next(link)
 
@@ -31,14 +31,14 @@ def make_floor_box(entity_manager, pos, width):
     entity_manager.add_entity(FloorBox((x+40,y),width=width-80)())
     entity_manager.add_entity(FloorBoxRight((x+(width-40),y))())
 
-def MovableBox(pos, width=50, height=50, mass=5, **kwargs):
+def MovableBox(pos, width=50, height=50, mass=5, friction=1.0, **kwargs):
     half_w, half_h = (width/2, height/2)
     verts = [(-half_w, -half_h),(-half_w,half_h),(half_w,half_h),(half_w, -half_h)]
     
-    return (lambda: world.BaseEntity(pos, verts, mass, dynamic=True, friction=1.0, texture_name="crate1", **kwargs))
+    return (lambda: world.BaseEntity(pos, verts, mass, dynamic=True, friction=friction, texture_name="crate1", **kwargs))
 
-def Banana(pos, **kwargs):
-    return (lambda: game_entities.Banana(pos, **kwargs))
+def Banana(pos, mass=2, **kwargs):
+    return (lambda: game_entities.Banana(pos, mass=mass, **kwargs))
 
 def Bananas(pos, **kwargs):
     return (lambda: game_entities.Bananas(pos, **kwargs))
