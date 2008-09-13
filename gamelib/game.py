@@ -47,6 +47,9 @@ class WorldInstance(object):
         self._level = levels.Levels[level_num - 1]
 
         self._player.get_body().position = self._level[levels.PLAYER_START]
+        self._level_name = self._level[levels.LEVEL_NAME]
+        self._level_max_time = self._level[levels.MAXTIME]
+
         self._we_manager.add_entity(self._player)
         
         for entity in self._level[levels.ELEMENTS]:
@@ -54,6 +57,8 @@ class WorldInstance(object):
 
         for factory in self._level[levels.FACTORIES]:
             factory(self._we_manager)
+
+        
 
     def next_level(self):
         self._init_level((self._level_num + 1) % len(levels.Levels))
@@ -67,8 +72,11 @@ class WorldInstance(object):
     def tick(self, dt):
         self._we_manager.tick(dt)
 
-    def get_time_passed(self):
-        return self._we_manager.get_time_passed()
+    def get_max_time(self):
+        return self._max_time
+
+    def get_level_name(self):
+        return self._level_name
 
     def get_space(self):
         return self._space
@@ -110,7 +118,7 @@ def main(screen):
     time = pygame.time
     MaxTime = 200
     time_elapsed = 0
-    text_timer = timerFont.render("%4i" % MaxTime, 4, (255,255,255))
+    text_timer = timerFont.render("%4i" % world._level_max_time, 4, (255,255,255))
 
 
     unused_time = 0
@@ -170,7 +178,7 @@ def main(screen):
             elif event.type == USEREVENT:
                 time_elapsed += 1
                 pygame.time.set_timer(USEREVENT, 1000)
-                time_left = MaxTime - time_elapsed
+                time_left = world._level_max_time - time_elapsed
 
                 if time_left == 0:
                     time_elapsed = 0
