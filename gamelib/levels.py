@@ -154,26 +154,31 @@ Level3 = {
 
 Level4 = {
     LEVEL_NAME: "Monkey with a Goal",
-    PLAYER_START: (50, 30),
+    PLAYER_START: (60, 100),
     MAXTIME: 150,
     
     ELEMENTS: [
-        FloorBox((25,20), width=50),
-        FloorBox((50,0), width=1,height=600),
-        FloorBox((0,-800), width=500,height=10),
-        FloorBox((600,-610), width=40,height=40),
-        FloorBox((800,-800), width=200,height=10),
-        FloorBox((1000,-760), width=200,height=50),
-        FloorBox((1200,-720), width=200,height=90),
-        FloorBox((500,-1000), width=300,height=40),
-        MovableBox((600,-800), width=10, height=10, mass=1000)
+        FloorBox((40,20), width=60),
+        FloorBox((0,-800), width=1000,height=40),
+        MovableBox((80,-760), width=80, height=80, mass=10),
+        MovableBox((80,-680), width=80, height=80, mass=10),
+        MovableBox((160,-760), width=80, height=80, mass=10)
+#        FloorBox((600,-610), width=40,height=40),
+#        FloorBox((800,-800), width=200,height=10),
+#        FloorBox((1000,-760), width=200,height=50),
+#        FloorBox((1200,-720), width=200,height=90),
+#        FloorBox((500,-1000), width=300,height=40),
+#        MovableBox((600,-800), width=10, height=10, mass=1000)
     ],
     
     FACTORIES: [
-        ChainFactory((0,50), length=30), #length in links
+        ChainFactory((700,-700), length=40), #length in links
+	MastFactory((0,1000), height = 1800),
+	MastFactory((960,-500), height = 300),
+	MastFactory((500,-700), height = 100)
     ]
 
 }
 
-Levels = [Level1,Level2,Level3]
+Levels = [Level1,Level2,Level3,Level4]
 
