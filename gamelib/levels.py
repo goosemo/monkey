@@ -170,29 +170,46 @@ Level4 = {
     PLAYER_START: (60, 100),
     MAXTIME: 150,
 
+    GOALBOX_LOCATION: (250, -1600),
+    GOAL_VALUE: 12,
+
     ELEMENTS: [
 #        MovableBox((80,-760), width=80, height=80, mass=10),
 #        MovableBox((80,-680), width=80, height=80, mass=10),
 #        MovableBox((160,-760), width=80, height=80, mass=10)
-        Hook((1195,-795))
+        Hook((1195,-795)),
+        Hook((595,-1495)),
+
+        Banana((780,-960)),
+        Banana((980,-960)),
+        Bananas((980,-1160))
+
+
+
     ],
     
     FACTORIES: [
-#        ChainFactory((700,-700), length=40), #length in links
-        FloorBoxFactory((590,-1000), width = 450),
+#        ChainFactory((700,-700), num_links=40), #length in links
+#        ChainFactory((850,-1480), num_links=8), 
+        ChainFactory((850,-980), num_links=8), 
+        FloorBoxFactory((590,-1000), width = 500),
         FloorBoxFactory((0,20), width=100),
         FloorBoxFactory((0,-800), width=1200,height=40),
         FloorBoxFactory((1300,-980), width=200,height=40),
         FloorBoxFactory((680,-1300), width=200,height=40),
-        FloorBoxFactory((500,-1500), width=500,height=40),
+        FloorBoxFactory((600,-1500), width=450,height=40),
+        FloorBoxFactory((940,-1180), width=120,height=40),
+        FloorBoxFactory((700,-1650), width=200,height=40),
+        FloorBoxFactory((200,-1800), width=410,height=40),
 
 	MastFactory((0,1000), height = 1800),
+	MastFactory((210,-1700), height = 500),
 	MastFactory((960,-400), height = 400),
 	MastFactory((500,-700), height = 900),
 	MastFactory((1400,1000), height = 2000),
 	MastFactory((800,-950), height = 120),
 	MastFactory((800,-1190), height = 800),
-	MastFactory((950,-950), height = 650)
+	MastFactory((1000,-950), height = 650)
     ]
 
 }
