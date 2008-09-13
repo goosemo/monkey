@@ -88,6 +88,10 @@ class BaseEntity(object):
 
         return False
 
+    def on_unbind_world(self):
+        self.release_tags()
+        self.taggable_release()
+
     def on_tag(self, entity, joint_id):
         self._tags[entity] = joint_id
 
@@ -221,6 +225,7 @@ class EntityManager(object):
         shape = entity.get_shape()
         if shape in self._entities:
             del self._entities[shape]
+            entity.on_unbind_world()
             self._space.remove(entity.get_body())
 
     def pin_join_entities(self, ent_a, ent_b, pos_a, pos_b):
