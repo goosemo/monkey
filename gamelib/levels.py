@@ -10,6 +10,45 @@ FACTORIES = 4
 GOALBOX_LOCATION = 5
 GOAL_VALUE = 6 
 
+Level0 = {
+    LEVEL_NAME: "Welcome to the Jungle",
+    PLAYER_START: (820,180),
+    MAXTIME: 800,
+
+    GOALBOX_LOCATION: (740, 80),
+    GOAL_VALUE: 2,
+
+
+    ELEMENTS: [
+
+        # Items in order on map
+        Banana((200,150)),
+        Banana((240,150)),
+        MovableBox((300,180), width=80, height=80, mass=5),
+        MovableBox((380,180), width=80, height=80, mass=5),
+        MovableBox((340,260), width=80, height=80, mass=5),
+  
+    ],
+
+    FACTORIES: [
+        ChainFactory((0,180), length=10), #length in links
+
+        # Floor areas
+        #                  x    y
+        FloorBoxFactory((-50, 100), width=600),
+        FloorBoxFactory((795, 100), width=160),
+        FloorBoxFactory((450, 0), width=400),
+
+        # Two main masts that hold level together
+        MastFactory((-40, 1140), height=1200),
+        MastFactory((900, 1140), height=1200),
+        MastFactory((460,80), height=130),
+        MastFactory((800,80), height=130)
+
+    ]
+}
+
+
 Level1 = {
     LEVEL_NAME: "Monkey on a Boat",
     PLAYER_START: (-150, 1000),
@@ -161,7 +200,7 @@ Level3 = {
 }
 
 Level4 = {
-    LEVEL_NAME: "\nKing of the Jungle\n",
+    LEVEL_NAME: "\nKing of the Forest\n",
     PLAYER_START: (50, -200),
     MAXTIME: 1000,
 
@@ -210,5 +249,5 @@ Level4 = {
 
 }
 
-Levels = [Level1,Level2,Level3,Level4]
+Levels = [Level0,Level1,Level2,Level3,Level4]
 
