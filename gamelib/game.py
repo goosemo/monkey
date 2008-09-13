@@ -48,7 +48,9 @@ class WorldInstance(object):
 
         self._player.get_body().position = self._level[levels.PLAYER_START]
         self._level_name = self._level[levels.LEVEL_NAME]
+
         self._level_max_time = self._level[levels.MAXTIME]
+        self._time_elapsed = 0
 
         self._we_manager.add_entity(self._player)
         
@@ -58,7 +60,11 @@ class WorldInstance(object):
         for factory in self._level[levels.FACTORIES]:
             factory(self._we_manager)
 
+        #Added this in to update the timer text when level changes
+        pygame.event.post(pygame.event.Event(pygame.USEREVENT))
         
+    def time_left(self):
+        return (self._level_max_time - self._time_elapsed)
 
     def next_level(self):
         self._init_level((self._level_num + 1) % len(levels.Levels))
@@ -162,7 +168,7 @@ def main(screen):
                 elif event.key == K_q:
                     player.drop()
                 elif event.key == K_LEFTBRACKET:
-                    world.previous_level()  
+                    world.previous_level()
                 elif event.key == K_RIGHTBRACKET:
                     world.next_level()
 
@@ -176,13 +182,13 @@ def main(screen):
                     player.end_tagging()
 
             elif event.type == USEREVENT:
-                time_elapsed += 1
+                world._time_elapsed += 1
                 pygame.time.set_timer(USEREVENT, 1000)
-                time_left = world._level_max_time - time_elapsed
+                time_left = world.time_left()
 
                 if time_left == 0:
-                    time_elapsed = 0
                     world.next_level()        
+
                 #render timer
                 if time_left > 50:
                     color = (255,255,255)
@@ -228,4 +234,8 @@ def main(screen):
 
         pygame.display.flip()
 
+    def display_level_name(self, screen):
+        level_font = timerFont.render("%s" % world._level_name, 4, (25,25,25))
+        screen.blit(level_font, (370 + hud_shift, 65))
+        pygame.time.wait(1000)
 
