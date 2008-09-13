@@ -14,20 +14,6 @@ Level1 = {
     
     ELEMENTS: [
 
-        # These are the leaves that come out into the level
-
-        #   left side
-        #           x    y
-#        FloorBox((-280, 800), width=250),
-#        FloorBox((-280, 500), width=250),
-#        FloorBox((-280, 200), width=250),
-
-
-        #   right side
-        #          x    y
- #       FloorBox(( 80, 650), width=250),
- #       FloorBox(( 80, 350), width=250),
-        
         # This is where the goods to collect are placed
         
         #   left side
@@ -79,17 +65,44 @@ Level1 = {
 }
 
 Level3 = {
-    LEVEL_NAME: "Alfreds Test Level",
-    PLAYER_START: (25,25),
+    LEVEL_NAME: "Trickle Down",
+    PLAYER_START: (30,1025),
 
     ELEMENTS: [
-        FloorBox((-100,0), width=500),
-        FloorBox((0,100), width=300),
-        MovableBox((100,200), width=40, height=40, mass = 10)
+
+        # Items in order on map
+        Banana((175,890)),
+
+        Bananas((375,690)),
+
+        #needs to be a goal box
+        MovableBox((575,490), width=40, height=40, mass = 10),
+
+        Bananas((775,290)),
+
     ],
 
     FACTORIES: [
         ChainFactory((0,50), length=20), #length in links
+
+        # Floor areas
+        #                  x    y
+        FloorBoxFactory((-50, 850), width=450),
+        FloorBoxFactory((250, 650), width=350),
+        FloorBoxFactory((450, 450), width=350),
+        FloorBoxFactory((650, 250), width=650),
+
+        # Uprights
+
+        # Two main masts that hold level together
+        MastFactory(( 100, 1000), height=1200),
+        MastFactory((1200, 1000), height=1200),
+        
+        # Masts inside main two
+        MastFactory((300,900), height=300),
+        MastFactory((500,700), height=300),
+        MastFactory((700,500), height=300),
+
     ]
 }
 
