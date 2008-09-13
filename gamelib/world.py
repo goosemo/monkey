@@ -30,6 +30,9 @@ class BaseEntity(object):
 
         self._tags = []
 
+    def set_texture(self, name):
+        self._texture_name = name
+
     def get_texture_name(self):
         return self._texture_name
 

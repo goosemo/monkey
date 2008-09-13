@@ -106,7 +106,7 @@ def main(screen):
 
     texture_manager = texture.TextureManager()
     texture_manager.register_texture('MUD', 'test.png')
-    texture_manager.register_texture('monkey', 'monkey.png')
+    texture_manager.register_texture('monkey', 'monkey_resized.png')
 
     texture_manager.register_texture('vertPole', 'VerticalPoleSmall.png')
     texture_manager.register_texture('chain', 'Chain01.png')
@@ -122,6 +122,16 @@ def main(screen):
     texture_manager.register_texture('bananas', 'BananaS.png')
     texture_manager.register_texture('topPole', 'PoleToppers.png')
     texture_manager.register_texture('bottomPole', 'PoleBottoms.png')
+
+    texture_manager.register_texture('MONKEY_L0', 'MonkeyWalk001.png')
+    texture_manager.register_texture('MONKEY_L1', 'MonkeyWalk002.png')
+    texture_manager.register_texture('MONKEY_L2', 'MonkeyWalk003.png')
+    texture_manager.register_texture('MONKEY_L3', 'MonkeyWalk004.png')
+
+    texture_manager.flip_texture('MONKEY_L0', 'MONKEY_R0')
+    texture_manager.flip_texture('MONKEY_L1', 'MONKEY_R1')
+    texture_manager.flip_texture('MONKEY_L2', 'MONKEY_R2')
+    texture_manager.flip_texture('MONKEY_L3', 'MONKEY_R3')
 
     pymunk.init_pymunk()
 
@@ -234,7 +244,7 @@ def main(screen):
 
         for entity in world.get_entities():
             if entity.is_textured():
-                tex = texture_manager.get_texture_map(entity)
+                tex = texture_manager.get_texture_map(entity, entity.get_texture_name())
                 image = pygame.transform.rotate(tex.image, entity.get_body().angle * 180/math.pi)
                 screen.blit(image, view.to_screen(entity.get_texture_origin()))
 

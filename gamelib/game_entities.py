@@ -3,7 +3,6 @@ import pymunk, world
 class Deliverable(world.BaseEntity):
     _worth = 1
 
-
 class Banana(Deliverable):
     def __init__(self, pos, **kwargs):
         half_w, half_h = (40/2, 40/2)
@@ -63,9 +62,16 @@ class Player(world.BaseEntity):
     RIGHT = 1
 
     MAX_JUMPS = 2 
+    
+    STOPPED_TEXTURE = "monkey"
+    LEFT_WALK_CYCLE = ["MONKEY_L0", "MONKEY_L1", "MONKEY_L2", "MONKEY_L3"]
+    RIGHT_WALK_CYCLE = ["MONKEY_R0", "MONKEY_R1", "MONKEY_R2", "MONKEY_R3"]
+    FRAME_COUNT = 4
+
+    CYCLE_PERIOD = 0.10
 
     def __init__(self, power = 40000):
-        world.BaseEntity.__init__(self, (400,400), [(-21,-48),(-21,48),(21,48),(21,-48)], 
+        world.BaseEntity.__init__(self, (400,400), [(-25,-50),(-25,50),(25,50),(25,-50)], 
             15, friction=0.4, moment=pymunk.inf, texture_name="monkey")
 
         self._power = power
@@ -85,6 +91,9 @@ class Player(world.BaseEntity):
 
         self.half_height = self.height/2
         self.half_width = self.width/2
+
+        self._cycle_position = 0 
+        self._cycle_time = 0.0
 
         self.stop()
 
@@ -191,6 +200,19 @@ class Player(world.BaseEntity):
         #jumps are re-enabled in on_collision if on top of a block
         self._can_begin_jump = False
 
+        self._cycle_time += dt
+        if self._cycle_time > Player.CYCLE_PERIOD:
+            cycle_shift = int(self._cycle_time / Player.CYCLE_PERIOD)
+            self._cycle_time -= cycle_shift * Player.CYCLE_PERIOD
+            self._cycle_position = (self._cycle_position + cycle_shift) % Player.FRAME_COUNT
+
+            if self._direction == Player.LEFT:
+                self.set_texture(Player.LEFT_WALK_CYCLE[self._cycle_position])
+            elif self._direction == Player.RIGHT:
+                self.set_texture(Player.RIGHT_WALK_CYCLE[self._cycle_position])
+            else:
+                self.set_texture(Player.STOPPED_TEXTURE)
+ 
         body = self.get_body()
         if abs(body.velocity[0]) < 250:
             body.apply_impulse((self._direction*self._power*dt, 0),(0,0))

@@ -21,17 +21,20 @@ class TextureManager(object):
         image = data.load_image(filename)
         self._textures[name] = Texture(image)
 
+    def flip_texture(self, name, new_name):
+        texture = self.get_texture(name)
+        self._textures[new_name] = Texture(pygame.transform.flip(texture.image, True, False))
+
     def get_texture(self, name):
         return self._textures[name]
 
-    def get_texture_map(self, entity):
-        if entity not in self._texture_maps:
-            self.texture_map_entity(entity)
+    def get_texture_map(self, entity, texture_name):
+        if (entity,texture_name) not in self._texture_maps:
+            self.texture_map_entity(entity, texture_name)
 
-        return self._texture_maps[entity]
+        return self._texture_maps[(entity, texture_name)]
 
-    def texture_map_entity(self, entity):
-        texture_name = entity.get_texture_name()
+    def texture_map_entity(self, entity, texture_name):
         if not texture_name:
             return
 
@@ -52,7 +55,7 @@ class TextureManager(object):
                 texture_sheet.blit(texture.image, dest)
 
         final_texture = Texture(texture_sheet)
-        self._texture_maps[entity] = final_texture
+        self._texture_maps[(entity, texture_name)] = final_texture
 
         return final_texture
     
