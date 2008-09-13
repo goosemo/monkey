@@ -1,12 +1,13 @@
 import pymunk, world 
 
+
 class Deliverable(world.BaseEntity):
     _worth = 1
 
 class Banana(Deliverable):
     def __init__(self, pos, **kwargs):
         half_w, half_h = (40/2, 40/2)
-        verts = [(-half_w, -half_h),(-half_w,half_h),(half_w,half_h),(half_w, -half_h)]
+        verts = [(-half_w, -half_h),(-half_w, half_h),(half_w,half_h),(half_w, -half_h)]
         world.BaseEntity.__init__(self, pos, verts, 1, dynamic=True, texture_name="banana", **kwargs) 
 
 class Bananas(Deliverable):
@@ -35,26 +36,70 @@ ChainLinkLen = 15
 class ChainLink(world.BaseEntity):
     LEN = ChainLinkLen 
     POLY = [(-ChainLinkLen/2, -5.00), (-ChainLinkLen/2,5.00), (ChainLinkLen/2, 5.00), (ChainLinkLen/2, -5.00)]
-    MAX_SEP = 5*ChainLinkLen
+    MAX_SEP = 25*ChainLinkLen
+
+    TICKS_TO_UNTANGLE = 200 
 
     def __init__(self, pos, previous, **kwargs):
-        world.BaseEntity.__init__(self, pos, ChainLink.POLY, 0.25, grabable=True, taggable = False, friction = 0.2, texture_name="chain")
+        world.BaseEntity.__init__(self, pos, ChainLink.POLY, 1, grabable=True, 
+        taggable = False, friction = 0.2, texture_name="chain", layers = 1)
         self._previous = previous
+        self._next = None
         self._joint_id = None
+        self._untangle_ticks = ChainLink.TICKS_TO_UNTANGLE + 1
 
     def on_bind_world(self, world_entity_manager):
         world.BaseEntity.on_bind_world(self, world_entity_manager)
         if self._previous:
             self._joint_id = self.get_world_entity_manager().pin_join_entities(self, self._previous, (-ChainLink.LEN/2,0), (ChainLink.LEN/2, 0))
 
+    def chain_untangle(self, grpid):
+        self.get_shape().group = grpid
+        self._untangle_ticks = 0
+        if self._next:
+            self._next.chain_untangle(grpid)
+
     def tick(self, dt):
         world.BaseEntity.tick(self, dt)
+
+        if self._untangle_ticks == ChainLink.TICKS_TO_UNTANGLE:
+            self.get_shape().group = 0
+
+        if self._untangle_ticks <= ChainLink.TICKS_TO_UNTANGLE:
+            self._untangle_ticks += 1
 
         if self._previous:
             sep = self._previous.get_body().position - self.get_body().position
             if(sep.length > ChainLink.MAX_SEP):
+                self._previous._next = None
                 self.get_world_entity_manager().unjoin(self._joint_id)
                 self._previous = None
+
+    def register_next(self, chainlink):
+        self._next = chainlink
+
+    def get_free_end(self):
+        head = self.get_head()
+        tail = self.get_tail()
+
+        if not head.taggable_is_attached():
+            return head
+        elif not tail.taggable_is_attached():
+            return tail
+        else:
+            return None
+
+    def get_head(self):
+        if not self._previous:
+            return self
+        else: 
+            return self._previous.get_head()
+
+    def get_tail(self):
+        if not self._next:
+            return self
+        else:
+            return self._next.get_tail()
         
 class Player(world.BaseEntity):
     STOP = 0
@@ -62,6 +107,8 @@ class Player(world.BaseEntity):
     RIGHT = 1
 
     MAX_JUMPS = 2
+
+    CollisionGroup = 1231
     
     STOPPED_TEXTURE = "monkey"
     LEFT_WALK_CYCLE = ["MONKEY_L0", "MONKEY_L1", "MONKEY_L2", "MONKEY_L3"]
@@ -72,7 +119,7 @@ class Player(world.BaseEntity):
 
     def __init__(self, power = 40000):
         world.BaseEntity.__init__(self, (400,400), [(-25,-50),(-25,50),(25,50),(25,-50)], 
-            15, friction=1.0, moment=pymunk.inf, texture_name="monkey")
+            15, friction=1, moment=pymunk.inf, texture_name="monkey", layers=2)
 
         self._power = power
         self._direction = Player.STOP
@@ -126,6 +173,9 @@ class Player(world.BaseEntity):
     def begin_grabbing(self):
         self._try_grab = True
 
+    def is_grabbing(self):
+        return self._try_grab
+
     def end_grabbing(self):
         self._try_grab = False
 
@@ -153,9 +203,10 @@ class Player(world.BaseEntity):
 
         self.drop()
 
-        lc_for_entity = entity.get_body().world_to_local(wc_contact_pos)
-        lc_for_player = self.get_body().world_to_local(wc_contact_pos)
-        joint_id = self.pin_join(entity, lc_for_player, lc_for_entity)
+#        lc_for_entity = entity.get_body().world_to_local(wc_contact_pos)
+#        lc_for_player = self.get_body().world_to_local(wc_contact_pos)
+        entity.get_body().position = self.get_body().position
+        joint_id = self.pin_join(entity, (0,0), (0,0))
         
         self._hold_joint = joint_id
         self._held_entity = entity
@@ -187,9 +238,9 @@ class Player(world.BaseEntity):
         #potentially costly call to get_bounding_rect
        
         bpos = self._body.position
-        if abs(contact_pos[1] - (bpos[1] - self.half_height)) < 0.06:
+        if abs(contact_pos[1] - (bpos[1] - self.half_height)) < 0.1:
             min_v, max_v = entity.get_bounding_rect()
-            tweak = self.half_width/2
+            tweak = self.half_width *0.99
             if min_v[0] < bpos[0] + tweak and bpos[0] < max_v[0] + tweak:
                 self._avail_jumps = Player.MAX_JUMPS
                 self._can_begin_jump = True

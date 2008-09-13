@@ -2,7 +2,7 @@ import pymunk
 from pymunk.vec2d import Vec2d
 
 class BaseEntity(object):
-    def __init__(self, world_pos, vertices, mass, friction=0.8, moment = None, taggable=True, grabable=False, texture_name=None, dynamic=True):
+    def __init__(self, world_pos, vertices, mass, friction=0.8, moment = None, taggable=True, grabable=False, texture_name=None, dynamic=True, collision_group=0, layers=2**32-1):
         self._world_entity_manager = None
 
         self._is_dynamic = True
@@ -24,11 +24,16 @@ class BaseEntity(object):
         self._texture_name = texture_name
         self._is_dynamic = dynamic
         self._time_passed = 0.0
+        self._shape.layers = layers
+        self._taggable_attached = None
+
+        self._shape.group = collision_group
 
         if not self._is_dynamic:
             self._bounding_rect_cache = self.get_bounding_rect(force=True)
 
-        self._tags = []
+        self._tags = {}
+        self._attached = False
 
     def set_texture(self, name):
         self._texture_name = name
@@ -84,13 +89,30 @@ class BaseEntity(object):
         return False
 
     def on_tag(self, entity, joint_id):
-        self._tags.append((entity, joint_id))
+        self._tags[entity] = joint_id
 
     def release_tags(self):
-        for entity, joint_id in self._tags:
-            self.get_world_entity_manager().unjoin(joint_id)
+        entities = self._tags.keys()
+        for entity in entities:
+            self.untag(entity)
 
-        self._tags = []
+    def on_taggable_attach(self, tagable):
+        self.taggable_release()
+        self._taggable_attached = tagable
+
+    def taggable_is_attached(self):
+        return self._taggable_attached is not None
+        
+    def taggable_release(self):
+        if self.taggable_is_attached():
+            self._taggable_attached.untag(self)
+
+    def untag(self, grabable_ent):
+        if grabable_ent in self._tags:
+            joint_id = self._tags[grabable_ent]
+            self.get_world_entity_manager().unjoin(joint_id)
+            grabable_ent._taggable_attached = None
+            del self._tags[grabable_ent]
 
     def tag(self, grabable_ent, wc_taggable_pos):
         if not self.is_taggable() or not grabable_ent.is_grabable():
@@ -113,8 +135,8 @@ class BaseEntity(object):
         #pin it to the taggable
         joint_id = grabable_ent.pin_join(self, lc_grabable_pos, lc_taggable_pos)
 
+        grabable_ent.on_taggable_attach(self)
         self.on_tag(grabable_ent, joint_id)
-
 
     def unjoin(self, joint_id):
         if self.is_world_bound():
@@ -183,9 +205,8 @@ class EntityManager(object):
         
         return True
 
-    def add_entity(self, entity, collision_group=0):
+    def add_entity(self, entity):
         shape = entity.get_shape()
-        shape.group = collision_group
 
         self._entities[shape] = entity
 

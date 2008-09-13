@@ -89,6 +89,23 @@ class WorldInstance(object):
         if self._goalbox.get_value() >= self._level[levels.GOAL_VALUE]:
             self.next_level()
 
+        
+        #hack to get chain interaction to work w/o collision
+        if self._player.is_grabbing():
+            min_v, max_v = self._player.get_bounding_rect()
+            for entity in self.get_entities():
+                if isinstance(entity, game_entities.ChainLink):
+                    pos = entity.get_body().position
+                    if min_v[0] <= pos[0] and pos[0] <= max_v[0]:
+                        if min_v[1] <= pos[1] and pos[1] <= max_v[1]:
+                            end = entity.get_free_end()
+                            if end:
+                               self._player.hold(end, self._player.get_body().position)
+                               head = entity.get_head()
+                               head.chain_untangle(self._we_manager.alloc_collision_group())
+
+
+
     def get_max_time(self):
         return self._max_time
 
@@ -247,6 +264,8 @@ def main(screen):
                 tex = texture_manager.get_texture_map(entity, entity.get_texture_name())
                 image = pygame.transform.rotate(tex.image, entity.get_body().angle * 180/math.pi)
                 screen.blit(image, view.to_screen(entity.get_texture_origin()))
+
+#            pygame.draw.polygon(screen, (255,255,255), map(view.to_screen, entity.get_vertices()), 1)
 
         #render hud, fps, & timer
         screen.blit(hud,(hud_shift,0))

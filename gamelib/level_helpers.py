@@ -6,6 +6,9 @@ def make_chain(entity_manager, pos, num_links = 10, mass = 1, **kwargs):
     for i in range(num_links):
         link_pos = (x +i*(game_entities.ChainLink.LEN+3), y)
         link = game_entities.ChainLink(link_pos, previous)
+        if previous:
+            previous.register_next(link)
+
         entity_manager.add_entity(link)
         previous = link
 
