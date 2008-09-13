@@ -69,7 +69,7 @@ class WorldInstance(object):
         return (self._level_max_time - self._time_elapsed)
 
     def restart_level(self):
-        self._init_level((self._level_num) % len(levels.Levels))
+        self._init_level((self._level_num))
 
     def next_level(self):
         self._init_level((self._level_num + 1) % len(levels.Levels))
@@ -139,7 +139,6 @@ def main(screen):
     time_elapsed = 0
     text_timer = timerFont.render("%4i" % world._level_max_time, 4, (255,255,255))
 
-
     unused_time = 0
     step_size = 0.005
 
@@ -147,7 +146,6 @@ def main(screen):
 
     #preprime event timers
     pygame.time.set_timer(USEREVENT, 1000)
-
 
     #pygame event loop
     is_running = True
@@ -201,13 +199,7 @@ def main(screen):
                 pygame.time.set_timer(USEREVENT, 1000)
                 time_left = world.time_left()
 
-                #for time being
-                failed = 0
-
                 if time_left == 0:
-                    if not failed:
-                        world.next_level()
-                    else:
                         world.restart_level()    
 #                    world.display_level_name(screen, font=levelFont, pos = (70+hud_shift, 165))
 
@@ -241,12 +233,6 @@ def main(screen):
                 tex = texture_manager.get_texture_map(entity)
                 image = pygame.transform.rotate(tex.image, entity.get_body().angle * 180/math.pi)
                 screen.blit(image, view.to_screen(entity.get_texture_origin()))
-
-#            color = (255, 0, 0)
-#            pygame.draw.circle(screen, color, view.to_screen(entity.get_body().position),3)
-#            color = (0,0,128,128)
-#            points = map(view.to_screen, entity.get_vertices())
-#            pygame.draw.polygon(screen, color, points, 1)
 
         #render hud, fps, & timer
         screen.blit(hud,(hud_shift,0))
