@@ -37,7 +37,9 @@ sounds = {}
 def play_sound(name):
     if name not in sounds:
         try:
-            sounds[name] = pygame.mixer.Sound(filepath(name))
+            sound = pygame.mixer.Sound(filepath(name))
+            sound.set_volume(0.75)
+            sounds[name] = sound
         except:
             print "couldn't load %s" % name
             sys.exit(0)
