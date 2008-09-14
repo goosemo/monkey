@@ -26,6 +26,8 @@ class View(object):
         return (int(v[0] - self._position[0] + self._screensize[0]/2), int((self._screensize[1]/2)-v[1] + self._position[1]))
 
 class WorldInstance(object):
+    KillDistance = 1000
+
     def __init__(self, player, texture_manager, level_num=1):
         self._player = player
         self._texture_manager = texture_manager
@@ -57,14 +59,41 @@ class WorldInstance(object):
         self._we_manager.add_entity(self._goalbox)
                 
         for entity in self._level[levels.ELEMENTS]:
-            self._we_manager.add_entity(entity())
+            ent = entity()
+            self._we_manager.add_entity(ent)
 
         for factory in self._level[levels.FACTORIES]:
             factory(self._we_manager)
 
+
+        entities = self._we_manager.get_entities()
+        min_x, min_y = entities[0].get_body().position
+        max_x, max_y = (min_x, min_y)
+
+        for entity in self._we_manager.get_entities():
+            x,y = entity.get_body().position
+            min_x = min(min_x, x)
+            min_y = min(min_y, y)
+            max_x = max(max_x, x)
+            max_y = max(max_y, y)
+
+        self._killbounds = (
+            (min_x - WorldInstance.KillDistance, min_y - WorldInstance.KillDistance),
+            (max_x + WorldInstance.KillDistance, max_y + WorldInstance.KillDistance)
+            )
+
+
         #Added this in to update the timer text when level changes
         pygame.event.post(pygame.event.Event(pygame.USEREVENT))
-        
+ 
+    def is_outside_world(self, entity):
+        min_v, max_v = self._killbounds
+        pos = entity.get_body().position
+        if pos[0] < min_v[0] or pos[1] < min_v[1] or pos[0] > max_v[0] or pos[1] > max_v[1]:
+            return True
+        else:
+            return False
+
     def time_left(self):
         return (self._level_max_time - self._time_elapsed)
 
@@ -85,27 +114,34 @@ class WorldInstance(object):
         return self._we_manager.get_entities()
 
     def tick(self, dt):
+        if self.is_outside_world(self._player):
+            self.restart_level()
+            return
+
+        for entity in self.get_entities():
+            if self.is_outside_world(entity):
+                self._we_manager.remove_entity(entity)
+
         self._we_manager.tick(dt)
         if self._goalbox.get_value() >= self._level[levels.GOAL_VALUE]:
             self.next_level()
 
         
         #hack to get chain interaction to work w/o collision
- 
         if self._player.is_grabbing():
             min_v, max_v = self._player.get_bounding_rect()
             for entity in self.get_entities():
                 if isinstance(entity, game_entities.ChainLink):
                     pos = entity.get_body().position
-                    if min_v[0] - 7<= pos[0] and pos[0] <= max_v[0] + 7:
-                        if min_v[1] - 7<= pos[1] and pos[1] <= max_v[1] + 7:
+                    if min_v[0] -7 <= pos[0] and pos[0] <= max_v[0] + 7:
+                        if min_v[1] -7  <= pos[1] and pos[1] <= max_v[1] +7:
                             end = entity.get_free_end()
-                            if entity.is_single(): end = entity
+                            if entity.is_single():
+                                end = entity
                             if end:
                                self._player.hold(end, self._player.get_body().position)
                                head = entity.get_head()
                                head.chain_untangle(self._we_manager.alloc_collision_group())
-
 
 
     def get_max_time(self):
