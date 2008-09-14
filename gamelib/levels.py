@@ -252,10 +252,10 @@ Level5 = {
     ],
     
     FACTORIES: [
-        ChainFactory((700,-700), num_links=6), 
-        ChainFactory((660,-1480 - 40), num_links=6), 
-        ChainFactory((800,-900), num_links=15), 
-        ChainFactory((1000,-700), num_links=8), 
+        ChainFactory((700,-700), num_links=4), 
+        ChainFactory((660,-1480 - 40), num_links=4), 
+        ChainFactory((800,-900), num_links=6), 
+        ChainFactory((1000,-700), num_links=6), 
         FloorBoxFactory((600,-1000 - 40), width = 490),
         FloorBoxFactory((0,-300), width=100), # was y=-300
         FloorBoxFactory((0,-800), width=1200,height=40),
