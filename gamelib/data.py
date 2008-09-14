@@ -30,3 +30,16 @@ def load_image(name):
         sys.exit(0)
 
     return image.convert_alpha()
+
+
+sounds = {}
+
+def play_sound(name):
+    if name not in sounds:
+        try:
+            sounds[name] = pygame.mixer.Sound(filepath(name))
+        except:
+            print "couldn't load %s" % name
+            sys.exit(0)
+
+    sounds[name].play()

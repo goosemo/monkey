@@ -1,4 +1,5 @@
 import pymunk, world 
+from data import play_sound
 
 
 class Deliverable(world.BaseEntity):
@@ -30,6 +31,7 @@ class GoalBox(world.BaseEntity):
     def on_collision(self, entity, contacts, normal_coef, data):
         if isinstance(entity, Deliverable):
             self._value += entity._worth
+            play_sound('goal.wav')
             self.get_world_entity_manager().remove_entity(entity)
 
 ChainLinkLen = 15
@@ -165,6 +167,7 @@ class Player(world.BaseEntity):
             self._avail_jumps -= 1
             jump_factor = 1/(Player.MAX_JUMPS - self._avail_jumps)
             self.get_body().apply_impulse((0,3000 + 2000 * jump_factor), (0,0))
+            play_sound('jump.wav')
 
 
     def begin_untagging(self):
@@ -213,6 +216,7 @@ class Player(world.BaseEntity):
         
         self._hold_joint = joint_id
         self._held_entity = entity
+        play_sound('chain_up.wav')
 
     def get_held_entity(self):
         return self._held_entity

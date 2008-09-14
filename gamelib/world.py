@@ -1,5 +1,6 @@
 import pymunk
 from pymunk.vec2d import Vec2d
+from data import play_sound
 
 class BaseEntity(object):
     def __init__(self, world_pos, vertices, mass, friction=0.8, moment = None, taggable=True, grabable=False, texture_name=None, dynamic=True, collision_group=0, layers=2**32-1):
@@ -116,6 +117,7 @@ class BaseEntity(object):
             joint_id = self._tags[grabable_ent]
             self.get_world_entity_manager().unjoin(joint_id)
             grabable_ent._taggable_attached = None
+            play_sound('detach.wav')
             del self._tags[grabable_ent]
 
     def tag(self, grabable_ent, wc_taggable_pos):
@@ -141,6 +143,7 @@ class BaseEntity(object):
 
         grabable_ent.on_taggable_attach(self)
         self.on_tag(grabable_ent, joint_id)
+        play_sound('attach.wav')
 
     def unjoin(self, joint_id):
         if self.is_world_bound():
