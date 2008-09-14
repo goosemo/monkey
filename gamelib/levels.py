@@ -195,23 +195,33 @@ Level4 = {
     PLAYER_START: (140,80),
     MAXTIME: 150,
 
-    GOALBOX_LOCATION: (1400, 30),
+    GOALBOX_LOCATION: (1150, -200),
     GOAL_VALUE: 12,
 
 
     ELEMENTS: [
 
-        Banana((0,35),mass=10),
-        Hook((800,0)),
-        MovableBox((500,40), width=500, height=40, mass = 5, friction=3.0),
+        Banana((0,35),mass=4),
+        Banana((40,35),mass=4),
+        Banana((80,35),mass=4),
+        Banana((120,35),mass=4),
+        Banana((0,70),mass=4),
+        Banana((40,70),mass=4),
+        Banana((80,70),mass=4),
+        Banana((120,70),mass=4),
+        MovableBox((500,40), width=400, height=40, mass = 15, friction=0.1),
         # Items in order on map
    
     ],
 
     FACTORIES: [
-        MastFactory(( 1280,  -30), height= 300),
-        FloorBoxFactory((-100, 0), width=900),
-        FloorBoxFactory((1200, -50), width=300),
+        MastFactory(( 1080,  100), height= 800),
+        MastFactory(( -180,  1000), height= 1200),
+        MastFactory(( 1500,  200), height= 1200),
+        FloorBoxFactory((-200, 0), width=900),
+        FloorBoxFactory((1350, -200), width=200),
+        FloorBoxFactory((1000, -400), width=400),
+        FloorBoxFactory((1000, 5), width=400),
         ChainFactory((250,10), mass=5, num_links=1, friction=15.0), 
         ChainFactory((245,10), mass=5,  num_links=1, friction=15.0), 
         ChainFactory((240,10), mass=5, num_links=1, friction=15.0)
