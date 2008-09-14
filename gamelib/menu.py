@@ -3,7 +3,7 @@
 import pygame, sys, data, game_entities
 from pygame.locals import *
 
-import game, util
+import game, util, texture
 from ezmenu import *
 from data import *
 
@@ -61,27 +61,22 @@ class Menu(object):
             y_pos += 30
 
        
-    def walking_monkey(self, screen, i=0):
+    def walking_monkey(self, screen, image_list):
+	if self.i % 77 == 0: self.bg = load_image(image_list[self.i%4])
+        self.i += 1
         
-        player = game_entities.Player()
-        player.tick(1)
-        player.get_body().position = (50,50)
-
-        if i < 50:
-            player.left()
-        elif i < 100:
-            player.right()
-        elif i < 110:
-            player.stop()
-            i = 0
-        i += i
+        
 
 
     def main_loop(self):
+	self.image_list = ['MonkeyWalk001.png', 'MonkeyWalk002.png', 'MonkeyWalk003.png', 'MonkeyWalk004.png']
+	self.bg = load_image(self.image_list[0])
+
 
         directions_font = pygame.font.Font(data.filepath("oneway.ttf"), 24)
         title_font = pygame.font.Font(filepath("pointy.ttf"), 56)
         title = "Monkey in a Tangle"
+	self.i = 0
 
         while True:
             events = pygame.event.get()
@@ -95,13 +90,13 @@ class Menu(object):
                     return
         
             self.screen.fill((0x28,0x08b,0xd7))
-            bg = load_image("MonkeyWalk001.png")
-            self.screen.blit(bg, (80, 500))
             self.menu.draw(self.screen)
               
             text_surf = title_font.render("%s" % title, 1, (255,255,255))
             self.screen.blit(text_surf, (30, 30))
-            self.walking_monkey(self.screen)
+            self.walking_monkey(self.screen, self.image_list)
+            self.screen.blit(self.bg, (80,500))
+
             self.print_directions(self.screen, directions_font)
             pygame.display.flip()
         

@@ -13,7 +13,7 @@ GOAL_VALUE = 6
 Level0 = {
     LEVEL_NAME: "Welcome to the Jungle",
     PLAYER_START: (820,180),
-    MAXTIME: 800,
+    MAXTIME: 150,
 
     GOALBOX_LOCATION: (740, 80),
     GOAL_VALUE: 2,
@@ -55,7 +55,7 @@ Level1 = {
     MAXTIME: 350,
 
     GOALBOX_LOCATION: (-70, 100),
-    GOAL_VALUE: 10,
+    GOAL_VALUE: 11,
 
     ELEMENTS: [
 
@@ -116,7 +116,7 @@ Level2 = {
     MAXTIME: 150,
 
     GOALBOX_LOCATION: (575, 500),
-    GOAL_VALUE: 10,
+    GOAL_VALUE: 11,
 
 
     ELEMENTS: [
@@ -193,7 +193,7 @@ Level3 = {
 Level4 = {
     LEVEL_NAME: "Banana Bridge",
     PLAYER_START: (140,80),
-    MAXTIME: 150,
+    MAXTIME: 200,
 
     GOALBOX_LOCATION: (1150, -200),
     GOAL_VALUE: 8,
