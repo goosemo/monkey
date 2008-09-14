@@ -95,8 +95,8 @@ class Menu(object):
                     return
         
             self.screen.fill((0x28,0x08b,0xd7))
-#            bg = load_image("loadScreen.png")
-#            self.screen.blit(bg, (0, 0))
+            bg = load_image("MonkeyWalk001.png")
+            self.screen.blit(bg, (80, 500))
             self.menu.draw(self.screen)
               
             text_surf = title_font.render("%s" % title, 1, (255,255,255))
