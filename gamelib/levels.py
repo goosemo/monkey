@@ -55,7 +55,7 @@ Level1 = {
     MAXTIME: 250,
 
     GOALBOX_LOCATION: (-70, 100),
-    GOAL_VALUE: 12,
+    GOAL_VALUE: 5,
 
     ELEMENTS: [
 
@@ -116,7 +116,7 @@ Level2 = {
     MAXTIME: 150,
 
     GOALBOX_LOCATION: (575, 500),
-    GOAL_VALUE: 12,
+    GOAL_VALUE: 3,
 
 
     ELEMENTS: [
@@ -159,7 +159,7 @@ Level3 = {
     MAXTIME: 200,
 
     GOALBOX_LOCATION: (100, 100),
-    GOAL_VALUE: 12,
+    GOAL_VALUE: 4,
 
     ELEMENTS: [
 

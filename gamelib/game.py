@@ -110,6 +110,16 @@ class WorldInstance(object):
         level_text = font.render("%s" % self._level_name, 4, (25,25,25))
         screen.blit(level_text, pos)
 
+    def display_level_progress(self, screen, font, pos):
+
+        color = (0,0,0)    
+        if (self._level[levels.GOAL_VALUE] - self._goalbox.get_value() < 2):
+            color = (255,0,0)
+
+        progress_text = font.render("%i:%i" % (self._goalbox.get_value(), self._level[levels.GOAL_VALUE]), 4, color)
+        screen.blit(progress_text, pos)
+
+
     def get_entities(self):
         return self._we_manager.get_entities()
 
@@ -312,6 +322,8 @@ def main(screen):
         text_surf = font.render("fps: %i" % clock.get_fps(), 1, (255,0,0))
         screen.blit(text_surf, (5, 5))
         screen.blit(text_timer, (370 + hud_shift, 65))
+
+        world.display_level_progress(screen, font=levelFont, pos = (700+hud_shift, 55))
 
         if world._time_elapsed < 5:
             world.display_level_name(screen, font=levelFont, pos = (70+hud_shift, 165))        
