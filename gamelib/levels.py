@@ -52,10 +52,10 @@ Level0 = {
 Level1 = {
     LEVEL_NAME: "Monkey on a Boat",
     PLAYER_START: (-150, 1000),
-    MAXTIME: 250,
+    MAXTIME: 350,
 
     GOALBOX_LOCATION: (-70, 100),
-    GOAL_VALUE: 5,
+    GOAL_VALUE: 10,
 
     ELEMENTS: [
 
@@ -116,7 +116,7 @@ Level2 = {
     MAXTIME: 150,
 
     GOALBOX_LOCATION: (575, 500),
-    GOAL_VALUE: 3,
+    GOAL_VALUE: 10,
 
 
     ELEMENTS: [
@@ -159,7 +159,7 @@ Level3 = {
     MAXTIME: 200,
 
     GOALBOX_LOCATION: (100, 100),
-    GOAL_VALUE: 4,
+    GOAL_VALUE: 11,
 
     ELEMENTS: [
 
