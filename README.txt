@@ -3,7 +3,7 @@ Monkey in a Tangle (Working title)
 
 Entry in PyWeek #7  <http://www.pyweek.org/7/>
 Team: Ohio State U. Game Creation Club
-Members: morgan.goose AlfredR Jane jsharpna
+Members: morgan.goose, Alfred Rossi (AlfredR), Jane, jsharpna
 
 DEPENDENCIES:
 
