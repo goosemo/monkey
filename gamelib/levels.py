@@ -196,20 +196,20 @@ Level4 = {
     MAXTIME: 150,
 
     GOALBOX_LOCATION: (1150, -200),
-    GOAL_VALUE: 12,
+    GOAL_VALUE: 8,
 
 
     ELEMENTS: [
 
-        Banana((0,35),mass=4),
-        Banana((40,35),mass=4),
-        Banana((80,35),mass=4),
-        Banana((120,35),mass=4),
-        Banana((0,70),mass=4),
-        Banana((40,70),mass=4),
-        Banana((80,70),mass=4),
-        Banana((120,70),mass=4),
-        MovableBox((500,40), width=400, height=40, mass = 15, friction=0.1),
+        Banana((0,35),mass=0.1),
+        Banana((40,35),mass=0.1),
+        Banana((80,35),mass=0.1),
+        Banana((120,35),mass=0.1),
+        Banana((0,70),mass=0.1),
+        Banana((40,70),mass=0.1),
+        Banana((80,70),mass=0.1),
+        Banana((120,70),mass=0.1),
+        MovableBox((500,40), width=400, height=40, mass = 15, friction=0.5),
         # Items in order on map
    
     ],
@@ -219,12 +219,12 @@ Level4 = {
         MastFactory(( -180,  1000), height= 1200),
         MastFactory(( 1500,  200), height= 1200),
         FloorBoxFactory((-200, 0), width=900),
-        FloorBoxFactory((1350, -200), width=200),
-        FloorBoxFactory((1000, -400), width=400),
+        FloorBoxFactory((1350, -150), width=200),
+        FloorBoxFactory((1000, -350), width=400),
         FloorBoxFactory((1000, 5), width=400),
-        ChainFactory((250,10), mass=5, num_links=1, friction=15.0), 
-        ChainFactory((245,10), mass=5,  num_links=1, friction=15.0), 
-        ChainFactory((240,10), mass=5, num_links=1, friction=15.0)
+        ChainFactory((250,10), mass=1, num_links=1, friction=15.0), 
+        ChainFactory((245,10), mass=1,  num_links=1, friction=15.0), 
+        ChainFactory((240,10), mass=1, num_links=1, friction=15.0)
     ]
 }
 
