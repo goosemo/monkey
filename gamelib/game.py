@@ -166,8 +166,10 @@ class WorldInstance(object):
 def main(screen):
     screensize = (screen.get_width(), screen.get_height())
     
-    hud = data.load_image("headerCropped.png")
+    #hud = data.load_image("headerCropped.png")
+    hud = data.load_image("header_colored.png")
     hud_shift = (screensize[0]  - hud.get_width())/2
+    hud_center = hud_shift + (hud.get_width()/2)
 
     texture_manager = texture.TextureManager()
     texture_manager.register_texture('MUD', 'test.png')
@@ -210,9 +212,9 @@ def main(screen):
 
     clock = pygame.time.Clock()
     time = pygame.time
-    MaxTime = 200
+    MaxTime = 250
     time_elapsed = 0
-    text_timer = timerFont.render("%4i" % world._level_max_time, 4, (255,255,255))
+    text_timer = timerFont.render("%4i" % world._level_max_time, 4, (0, 0, 0))
 
     unused_time = 0
     step_size = 0.005
@@ -259,10 +261,13 @@ def main(screen):
                     world.restart_level()
                 elif event.key == K_LEFTBRACKET:
                     world.previous_level()
- #                   world.display_level_name(screen, font=levelFont, pos = (70+hud_shift, 165))
+                    world.display_level_name(
+                            screen, font=levelFont, pos = (70+hud_shift, 165))
+
                 elif event.key == K_RIGHTBRACKET:
                     world.next_level()
- #                   world.display_level_name(screen, font=levelFont, pos = (70+hud_shift, 165))
+                    world.display_level_name(
+                            screen, font=levelFont, pos = (70+hud_shift, 165))
 
 
             elif event.type == KEYUP:
@@ -286,7 +291,7 @@ def main(screen):
 
                 #render timer
                 if time_left > 50:
-                    color = (255,255,255)
+                    color = (0, 0, 0)
                 elif time_left > 10:
                     color = (155,0,0)
                 else:
@@ -319,9 +324,10 @@ def main(screen):
 
         #render hud, fps, & timer
         screen.blit(hud,(hud_shift,0))
-        text_surf = font.render("fps: %i" % clock.get_fps(), 1, (255,0,0))
+        text_surf = font.render("fps: %i" % clock.get_fps(), 1, (25,0,0))
         screen.blit(text_surf, (5, 5))
-        screen.blit(text_timer, (370 + hud_shift, 65))
+        #screen.blit(text_timer, (370 + hud_shift, 65))
+        screen.blit(text_timer, (hud_center - 30 , hud.get_height()- 34))
 
         world.display_level_progress(screen, font=levelFont, pos = (700+hud_shift, 55))
 

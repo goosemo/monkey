@@ -115,7 +115,9 @@ class Player(world.BaseEntity):
 
     CollisionGroup = 1231
     
-    STOPPED_TEXTURE = "monkey"
+    #STOPPED_TEXTURE = "monkey"
+    STOPPED_RIGHT_TEXTURE = "MONKEY_R0"
+    STOPPED_LEFT_TEXTURE = "MONKEY_L0"
     LEFT_WALK_CYCLE = ["MONKEY_L0", "MONKEY_L1", "MONKEY_L2", "MONKEY_L3"]
     RIGHT_WALK_CYCLE = ["MONKEY_R0", "MONKEY_R1", "MONKEY_R2", "MONKEY_R3"]
     FRAME_COUNT = 4
@@ -133,6 +135,8 @@ class Player(world.BaseEntity):
         self._try_grab = False
         self._try_tag = False
         self._try_untag = False
+
+        self.last_dir = 'left'
 
         self._avail_jumps = Player.MAX_JUMPS
         self._can_begin_jump = False
@@ -265,11 +269,16 @@ class Player(world.BaseEntity):
             self._cycle_position = (self._cycle_position + cycle_shift) % Player.FRAME_COUNT
 
             if self._direction == Player.LEFT:
+                self.last_dir = 'left'
                 self.set_texture(Player.LEFT_WALK_CYCLE[self._cycle_position])
             elif self._direction == Player.RIGHT:
+                self.last_dir = 'right'
                 self.set_texture(Player.RIGHT_WALK_CYCLE[self._cycle_position])
             else:
-                self.set_texture(Player.STOPPED_TEXTURE)
+                if self.last_dir == 'left':
+                    self.set_texture(Player.STOPPED_LEFT_TEXTURE)
+                elif self.last_dir == 'right':
+                    self.set_texture(Player.STOPPED_RIGHT_TEXTURE)
  
         body = self.get_body()
         if abs(body.velocity[0]) < 250:
